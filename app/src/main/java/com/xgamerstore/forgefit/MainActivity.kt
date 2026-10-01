@@ -248,7 +248,9 @@ class FitStore(context: Context) {
         }
     }
 }
-\n\nprivate val Bg = Color(0xFF0B0D10)
+
+
+private val Bg = Color(0xFF0B0D10)
 private val Panel = Color(0xFF15191F)
 private val Panel2 = Color(0xFF20262E)
 private val Orange = Color(0xFFFF5A36)
