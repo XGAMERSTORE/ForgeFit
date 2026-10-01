@@ -1,4 +1,4 @@
-package com.xgamerstore.forgefit
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)\n\npackage com.xgamerstore.forgefit
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
