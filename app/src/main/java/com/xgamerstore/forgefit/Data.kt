@@ -122,3 +122,98 @@ val exerciseLibrary = listOf(
         "Přeskakuj do stran z jedné nohy na druhou a dopadej měkce.",
         "Nedopadej na ztuhlou nohu.")
 )
+
+
+fun workoutFor(profile: UserProfile): List<Exercise> {
+    val count = when {
+        profile.minutes <= 20 -> 4
+        profile.minutes <= 40 -> 6
+        else -> 8
+    }
+    val preferred = exerciseLibrary.filter { e ->
+        when {
+            "Nohy" in profile.focus -> e.muscle.contains("Nohy")
+            "Hýždě" in profile.focus -> e.muscle.contains("Hýždě")
+            "Břicho" in profile.focus -> e.muscle.contains("Břicho") || e.muscle.contains("Core")
+            "Hrudník" in profile.focus -> e.muscle.contains("Hrudník")
+            "Záda" in profile.focus -> e.muscle.contains("Záda")
+            "Ramena" in profile.focus -> e.muscle.contains("ramena", ignoreCase = true) || e.muscle.contains("Ramena")
+            "Kondice" in profile.focus -> e.muscle.contains("Kondice")
+            else -> true
+        }
+    }
+    val base = if (preferred.size >= count) preferred else exerciseLibrary
+    val ordered = when(profile.goal) {
+        "Kondice", "Zhubnout" -> base.sortedByDescending { it.seconds > 0 || it.muscle.contains("Kondice") }
+        "Síla", "Nabrat svaly" -> base.sortedByDescending { it.seconds == 0 }
+        else -> base
+    }
+    return ordered.take(count)
+}
+
+class FitStore(context: Context) {
+    private val p = context.getSharedPreferences("forgefit", Context.MODE_PRIVATE)
+
+    fun hasProfile() = p.getBoolean("done", false)
+
+    fun loadProfile() = UserProfile(
+        name = p.getString("name","") ?: "",
+        age = p.getInt("age",25),
+        sex = p.getString("sex","Nechci uvést") ?: "Nechci uvést",
+        height = p.getInt("height",175),
+        weight = p.getInt("weight",75),
+        goal = p.getString("goal","Kondice") ?: "Kondice",
+        experience = p.getString("experience","Začátečník") ?: "Začátečník",
+        days = p.getInt("days",3),
+        minutes = p.getInt("minutes",35),
+        place = p.getString("place","Doma") ?: "Doma",
+        equipment = p.getStringSet("equipment",setOf("Vlastní váha")) ?: setOf("Vlastní váha"),
+        focus = p.getStringSet("focus",setOf("Celé tělo")) ?: setOf("Celé tělo")
+    )
+
+    fun saveProfile(u: UserProfile) {
+        p.edit()
+            .putBoolean("done",true).putString("name",u.name).putInt("age",u.age)
+            .putString("sex",u.sex).putInt("height",u.height).putInt("weight",u.weight)
+            .putString("goal",u.goal).putString("experience",u.experience).putInt("days",u.days)
+            .putInt("minutes",u.minutes).putString("place",u.place)
+            .putStringSet("equipment",u.equipment).putStringSet("focus",u.focus)
+            .apply()
+    }
+
+    fun addWorkout(minutes:Int, sets:Int, reps:Int) {
+        ensureWeek()
+        p.edit()
+            .putInt("workouts",p.getInt("workouts",0)+1)
+            .putInt("minutes_sum",p.getInt("minutes_sum",0)+minutes)
+            .putInt("sets_sum",p.getInt("sets_sum",0)+sets)
+            .putInt("reps_sum",p.getInt("reps_sum",0)+reps)
+            .putInt("total",p.getInt("total",0)+1)
+            .apply()
+    }
+
+    fun stats(): List<Int> {
+        ensureWeek()
+        return listOf(
+            p.getInt("workouts",0),
+            p.getInt("minutes_sum",0),
+            p.getInt("sets_sum",0),
+            p.getInt("reps_sum",0),
+            p.getInt("total",0)
+        )
+    }
+
+    private fun ensureWeek() {
+        val d = LocalDate.now()
+        val key = d.minusDays((d.dayOfWeek.value - 1).toLong()).toString()
+        if (p.getString("week","") != key) {
+            p.edit()
+                .putString("week",key)
+                .putInt("workouts",0)
+                .putInt("minutes_sum",0)
+                .putInt("sets_sum",0)
+                .putInt("reps_sum",0)
+                .apply()
+        }
+    }
+}
