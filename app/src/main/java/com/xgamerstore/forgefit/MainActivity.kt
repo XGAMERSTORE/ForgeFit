@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private val ForgeColors: DarkColorScheme
+private val ForgeColors: ColorScheme
     @Composable get() = darkColorScheme(
         background = Color(0xFF0B0D10),
         surface = Color(0xFF141820),
