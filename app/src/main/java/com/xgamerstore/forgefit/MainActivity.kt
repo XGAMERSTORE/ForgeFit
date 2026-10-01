@@ -177,7 +177,7 @@ fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
         NavigationBar(containerColor=Panel) {
             listOf("Dnes","Cviky","Přehled","Profil").forEachIndexed { i,t ->
                 val icon=when(i){0->Icons.Default.Home;1->Icons.Default.FitnessCenter;2->Icons.Default.BarChart;else->Icons.Default.Person}
-                NavigationBarItem(tab==i,{tab=i},{Icon(icon,null)},{Text(t)})
+                NavigationBarItem(selected=tab==i,onClick={tab=i},icon={Icon(icon,null)},label={Text(t)})
             }
         }
     }) { p ->
