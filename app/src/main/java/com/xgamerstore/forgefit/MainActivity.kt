@@ -54,7 +54,7 @@ private val ForgeColors: ColorScheme
         onPrimary = Color(0xFF24110C)
     )
 
-private enum class Screen { Home, Exercises, Progress, Profile, Settings, Premium, Workout }
+private enum class Screen { Home, Exercises, Progress, Profile, Settings, Premium, Tools, Workout }
 
 private data class Exercise(
     val name: String,
@@ -65,12 +65,37 @@ private data class Exercise(
 )
 
 private val exercises = listOf(
+    Exercise("Dřep", "Nohy • hýždě", "3 × 12", "12 opakování", "Kolena sledují špičky a hrudník drž vysoko."),
+    Exercise("Klik", "Hrudník • triceps • core", "3 × 10", "10 opakování", "Tělo drž v jedné linii a hrudník spouštěj kontrolovaně."),
+    Exercise("Plank", "Core • ramena", "3 × 35 s", "35 sekund", "Lokty pod ramena, zpevni břicho a nepropadej bedra."),
+    Exercise("Výpad vzad", "Nohy • hýždě", "3 × 10", "10 na nohu", "Krokni vzad a klesej kolmo dolů."),
+    Exercise("Jumping jack", "Kondice • celé tělo", "3 × 40 s", "40 sekund", "Dopadej měkce a drž plynulý rytmus."),
+    Exercise("Glute bridge", "Hýždě • zadní stehna", "3 × 15", "15 opakování", "Tlač přes paty a nahoře zatni hýždě."),
+    Exercise("Zkracovačky", "Břicho", "3 × 15", "15 opakování", "Bedra nech na podložce a zvedej lopatky silou břicha."),
+    Exercise("Mountain climber", "Core • kondice", "3 × 35 s", "35 sekund", "Ramena drž nad dlaněmi a boky stabilní."),
+    Exercise("Sumo dřep", "Nohy • hýždě", "3 × 12", "12 opakování", "Postav se široce a kolena veď směrem ke špičkám."),
+    Exercise("Dřep s výskokem", "Nohy • kondice", "3 × 10", "10 opakování", "Dopadni měkce zpět do stabilního dřepu."),
+    Exercise("Bulharský dřep", "Nohy • hýždě", "3 × 10", "10 na nohu", "Přední chodidlo nech pevně na zemi a pohyb kontroluj."),
+    Exercise("Wall sit", "Nohy • kvadricepsy", "3 × 40 s", "40 sekund", "Záda drž opřená a kolena přibližně v pravém úhlu."),
+    Exercise("Výpony na lýtka", "Lýtka", "3 × 18", "18 opakování", "Nahoře krátce zastav a pomalu klesej."),
+    Exercise("Klik na kolenou", "Hrudník • triceps", "3 × 12", "12 opakování", "Tělo od kolen k hlavě drž v přímce."),
+    Exercise("Diamantový klik", "Triceps • hrudník", "3 × 8", "8 opakování", "Dlaně dej blíž pod hrudník a lokty drž u těla."),
     Exercise("Pike push-up", "Ramena • triceps", "3 × 10", "10 opakování", "Boky drž vysoko do obráceného V. Hlava míří mezi dlaně."),
-    Exercise("Plank shoulder tap", "Core • ramena", "3 × 16", "16 dotyků", "Drž pánev stabilní a střídavě se dotýkej protilehlého ramene."),
-    Exercise("Plank", "Core • ramena", "3 × 35 s", "35 sekund", "Tělo drž v jedné linii. Nepropadej se v bedrech."),
-    Exercise("Side plank", "Šikmé břišní svaly • ramena", "3 × 30 s", "30 sekund", "Rameno drž nad loktem a boky vytlač vzhůru.")
+    Exercise("Superman", "Záda • hýždě", "3 × 12", "12 opakování", "Zvedni paže i nohy jen do příjemného rozsahu."),
+    Exercise("Bird dog", "Core • záda", "3 × 10", "10 na stranu", "Natahuj opačnou paži a nohu bez rotace pánve."),
+    Exercise("Dead bug", "Core", "3 × 10", "10 na stranu", "Bedra drž přitlačená k podložce."),
+    Exercise("Side plank", "Šikmé břišní svaly • ramena", "3 × 30 s", "30 sekund", "Rameno drž nad loktem a boky vytlač vzhůru."),
+    Exercise("Russian twist", "Břicho • šikmé svaly", "3 × 16", "16 dotyků", "Otáčej hrudník, ne jen ruce."),
+    Exercise("High knees", "Kondice • core", "3 × 40 s", "40 sekund", "Zvedej kolena svižně a pracuj pažemi."),
+    Exercise("Burpee", "Celé tělo • kondice", "3 × 10", "10 opakování", "Přechod do prkna dělej s pevným středem."),
+    Exercise("Bear crawl", "Core • ramena", "3 × 35 s", "35 sekund", "Kolena drž těsně nad zemí a boky stabilní."),
+    Exercise("Donkey kick", "Hýždě", "3 × 14", "14 na nohu", "Tlač patu vzhůru bez prohnutí v bedrech."),
+    Exercise("Fire hydrant", "Hýždě • boky", "3 × 14", "14 na stranu", "Zvedej koleno do strany bez rotace trupu."),
+    Exercise("Hip hinge", "Zadní stehna • hýždě", "3 × 12", "12 opakování", "Posouvej boky dozadu s rovnými zády."),
+    Exercise("Reverse crunch", "Spodní břicho", "3 × 12", "12 opakování", "Přitahuj kolena a lehce zvedni pánev."),
+    Exercise("Plank shoulder tap", "Core • ramena", "3 × 16", "16 dotyků", "Střídej dotyky ramen a drž pánev bez rotace."),
+    Exercise("Skater", "Kondice • nohy", "3 × 40 s", "40 sekund", "Přeskakuj do stran a dopadej měkce.")
 )
-
 @Composable
 private fun ForgeFitApp() {
     MaterialTheme(colorScheme = ForgeColors) {
@@ -84,6 +109,7 @@ private fun ForgeFitApp() {
                     onPremium = { screen = Screen.Premium }
                 )
                 Screen.Premium -> PremiumScreen(onBack = { screen = Screen.Settings })
+                Screen.Tools -> SmartToolsScreen(onBack = { screen = Screen.Profile })
                 Screen.Workout -> WorkoutScreen(
                     exercise = exercises[selectedExercise],
                     index = selectedExercise,
@@ -95,6 +121,7 @@ private fun ForgeFitApp() {
                     onScreen = { screen = it },
                     onSettings = { screen = Screen.Settings },
                     onPremium = { screen = Screen.Premium },
+                    onTools = { screen = Screen.Tools },
                     onExercise = { index ->
                         selectedExercise = index
                         screen = Screen.Workout
@@ -111,6 +138,7 @@ private fun MainShell(
     onScreen: (Screen) -> Unit,
     onSettings: () -> Unit,
     onPremium: () -> Unit,
+    onTools: () -> Unit,
     onExercise: (Int) -> Unit
 ) {
     Scaffold(
@@ -144,7 +172,7 @@ private fun MainShell(
                 Screen.Home -> HomeScreen(onExercise)
                 Screen.Exercises -> ExerciseListScreen(onExercise)
                 Screen.Progress -> ProgressScreen()
-                Screen.Profile -> ProfileScreen(onSettings, onPremium)
+                Screen.Profile -> ProfileScreen(onSettings, onPremium, onTools)
                 else -> Unit
             }
         }
@@ -291,7 +319,7 @@ private fun ProgressScreen() {
 }
 
 @Composable
-private fun ProfileScreen(onSettings: () -> Unit, onPremium: () -> Unit) {
+private fun ProfileScreen(onSettings: () -> Unit, onPremium: () -> Unit, onTools: () -> Unit) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         Header("Profil", "Vše důležité konečně na jednom místě") {
             IconButton(onClick = onSettings) {
@@ -319,6 +347,7 @@ private fun ProfileScreen(onSettings: () -> Unit, onPremium: () -> Unit) {
 
         Spacer(Modifier.height(14.dp))
         SettingRow(Icons.Default.Settings, "Nastavení", "Vzhled, jednotky, připomínky", onSettings)
+        SettingRow(Icons.Default.Calculate, "Chytré nástroje", "1RM, kotouče a zahřívací série", onTools)
         SettingRow(Icons.Default.FitnessCenter, "Tréninkové preference", "Délka, obtížnost, odpočinek") {}
         SettingRow(Icons.Default.Person, "Osobní údaje", "Cíle a vstupní údaje") {}
     }
@@ -462,6 +491,76 @@ private fun TopBackBar(title: String, onBack: () -> Unit) {
             Text("‹", fontSize = 42.sp, lineHeight = 42.sp, color = MaterialTheme.colorScheme.onBackground)
         }
         Text(title, fontSize = 27.sp, fontWeight = FontWeight.Black)
+    }
+}
+
+@Composable
+private fun SmartToolsScreen(onBack: () -> Unit) {
+    var weight by rememberSaveable { mutableIntStateOf(60) }
+    var reps by rememberSaveable { mutableIntStateOf(8) }
+    var target by rememberSaveable { mutableIntStateOf(100) }
+    val oneRm = (weight * (1f + reps / 30f)).toInt()
+    val perSide = ((target - 20).coerceAtLeast(0) / 2f)
+    val plates = listOf(25, 20, 15, 10, 5, 2, 1)
+    var remaining = perSide
+    val plateParts = mutableListOf<String>()
+    plates.forEach { p ->
+        val n = (remaining / p).toInt()
+        if (n > 0) {
+            plateParts.add(n.toString() + "× " + p.toString() + " kg")
+            remaining -= n * p
+        }
+    }
+    val plateText = if (plateParts.isEmpty()) "bez kotoučů" else plateParts.joinToString(" + ")
+
+    Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState())) {
+        TopBackBar("Chytré nástroje", onBack)
+        Text("Rychlé výpočty přímo při tréninku", modifier = Modifier.padding(horizontal = 22.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+        Card(Modifier.fillMaxWidth().padding(22.dp), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF171B23))) {
+            Column(Modifier.padding(22.dp)) {
+                Text("Odhad 1RM", fontSize = 22.sp, fontWeight = FontWeight.Black)
+                Text("Epleyho vzorec", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                Spacer(Modifier.height(14.dp))
+                NumberAdjust("Váha", weight, "kg", 1, 300) { weight = it }
+                NumberAdjust("Opakování", reps, "×", 1, 20) { reps = it }
+                Text("≈ " + oneRm + " kg", color = MaterialTheme.colorScheme.secondary, fontSize = 34.sp, fontWeight = FontWeight.Black, modifier = Modifier.padding(top = 12.dp))
+            }
+        }
+
+        Card(Modifier.fillMaxWidth().padding(horizontal = 22.dp), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF171B23))) {
+            Column(Modifier.padding(22.dp)) {
+                Text("Kalkulačka kotoučů", fontSize = 22.sp, fontWeight = FontWeight.Black)
+                Text("Počítá s 20kg osou", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                Spacer(Modifier.height(14.dp))
+                NumberAdjust("Cílová váha", target, "kg", 20, 300, 5) { target = it }
+                Text("Na každou stranu:", color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 12.dp))
+                Text(plateText, color = MaterialTheme.colorScheme.secondary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            }
+        }
+
+        Card(Modifier.fillMaxWidth().padding(22.dp), shape = RoundedCornerShape(26.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFF171B23))) {
+            Column(Modifier.padding(22.dp)) {
+                Text("Zahřívací série", fontSize = 22.sp, fontWeight = FontWeight.Black)
+                val warmups = listOf(40, 60, 75, 90).map { pct -> (target * pct / 100f).toInt() }
+                warmups.forEachIndexed { i, kg ->
+                    Row(Modifier.fillMaxWidth().padding(vertical = 7.dp)) {
+                        Text("Série " + (i + 1), Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(kg.toString() + " kg", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NumberAdjust(label: String, value: Int, suffix: String, min: Int, max: Int, step: Int = 1, set: (Int) -> Unit) {
+    Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        IconButton(onClick = { set((value - step).coerceAtLeast(min)) }) { Icon(Icons.Default.Remove, null) }
+        Text(value.toString() + " " + suffix, modifier = Modifier.width(86.dp), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+        IconButton(onClick = { set((value + step).coerceAtMost(max)) }) { Icon(Icons.Default.Add, null) }
     }
 }
 
