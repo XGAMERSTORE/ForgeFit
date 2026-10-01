@@ -1,6 +1,10 @@
-@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)\n\npackage com.xgamerstore.forgefit
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
+package com.xgamerstore.forgefit
 
 import android.os.Bundle
+import android.content.Context
+import java.time.LocalDate
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
@@ -28,12 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
-import kotlin.math.sin
 
-package com.xgamerstore.forgefit
-
-import android.content.Context
-import java.time.LocalDate
 
 data class UserProfile(
     val name: String = "",
