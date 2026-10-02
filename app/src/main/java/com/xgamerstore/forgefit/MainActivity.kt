@@ -288,6 +288,7 @@ private val Muted = Color(0xFF9AA4AF)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ForgeLang.init(this)
         setContent {
             MaterialTheme(colorScheme=darkColorScheme(primary=Orange,onPrimary=Color.Black,secondary=Gold,onSecondary=Color.Black,background=Bg,onBackground=Color(0xFFF4F1F7),surface=Panel,onSurface=Color(0xFFF4F1F7),surfaceVariant=Panel2,onSurfaceVariant=Muted)) {
                 val store = remember { FitStore(this) }
@@ -941,7 +942,7 @@ fun SettingsPage(back:()->Unit,premium:()->Unit) {
         SettingToggle("Připomínky","Upozornění na naplánovaný trénink",reminders){reminders=it}
         SettingInfo("Jednotky","Metrické • kg • cm")
         SettingInfo("Výchozí pauza","60 sekund")
-        SettingInfo("Jazyk","Čeština")
+        LanguageSettingRow()
         Spacer(Modifier.height(18.dp))
         Text("DATA",color=Orange,fontWeight=FontWeight.Black)
         SettingInfo("Místní profil","Zapnuto")
