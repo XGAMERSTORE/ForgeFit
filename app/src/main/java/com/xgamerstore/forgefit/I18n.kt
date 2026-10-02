@@ -1,14 +1,24 @@
 package com.xgamerstore.forgefit
 
 import android.content.Context
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextLayoutResult
@@ -20,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
@@ -70,14 +82,13 @@ object ForgeLang {
 
     private fun translatorFor(code: String): Translator? {
         if (code == "cs") return null
-        return translators.getOrPut(code) {
-            val target = TranslateLanguage.fromLanguageTag(code) ?: return null
-            val options = TranslatorOptions.Builder()
-                .setSourceLanguage(TranslateLanguage.CZECH)
-                .setTargetLanguage(target)
-                .build()
-            Translation.getClient(options)
-        }
+        translators[code]?.let { return it }
+        val target = TranslateLanguage.fromLanguageTag(code) ?: return null
+        val options = TranslatorOptions.Builder()
+            .setSourceLanguage(TranslateLanguage.CZECH)
+            .setTargetLanguage(target)
+            .build()
+        return Translation.getClient(options).also { translators[code] = it }
     }
 
     suspend fun translate(text: String, language: String = current): String {
@@ -146,19 +157,19 @@ fun Text(
 
 @Composable
 fun LanguageSettingRow() {
-    var open by mutableStateOf(false)
-    androidx.compose.foundation.layout.Row(
+    var open by remember { mutableStateOf(false) }
+    Row(
         Modifier
             .fillMaxWidth()
             .clickable { open = true }
-            .padding(vertical = androidx.compose.ui.unit.dp(12f)),
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        androidx.compose.foundation.layout.Column(Modifier.weight(1f)) {
+        Column(Modifier.weight(1f)) {
             Text("Jazyk", fontWeight = FontWeight.Bold, color = Color.White)
-            androidx.compose.material3.Text(ForgeLang.displayName(), color = Color(0xFF9AA4AF), fontSize = androidx.compose.ui.unit.sp(12f))
+            androidx.compose.material3.Text(ForgeLang.displayName(), color = Color(0xFF9AA4AF), fontSize = 12.sp)
         }
-        androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.ChevronRight, null, tint = Color(0xFF9AA4AF))
+        Icon(Icons.Default.ChevronRight, null, tint = Color(0xFF9AA4AF))
     }
 
     if (open) {
@@ -166,24 +177,22 @@ fun LanguageSettingRow() {
             onDismissRequest = { open = false },
             title = { Text("Vyber jazyk") },
             text = {
-                androidx.compose.foundation.lazy.LazyColumn(
-                    modifier = Modifier.heightIn(max = androidx.compose.ui.unit.dp(460f))
-                ) {
-                    items(ForgeLang.codes.size) { i ->
+                LazyColumn(modifier = Modifier.heightIn(max = 460.dp)) {
+                    items(ForgeLang.codes.indices.toList()) { i ->
                         val code = ForgeLang.codes[i]
-                        androidx.compose.foundation.layout.Row(
+                        Row(
                             Modifier
                                 .fillMaxWidth()
                                 .clickable {
                                     ForgeLang.setLanguage(code)
                                     open = false
                                 }
-                                .padding(vertical = androidx.compose.ui.unit.dp(11f)),
-                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                                .padding(vertical = 11.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             androidx.compose.material3.Text(ForgeLang.names[i], Modifier.weight(1f))
                             if (ForgeLang.current == code) {
-                                androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Check, null, tint = Color(0xFFFF5A36))
+                                Icon(Icons.Default.Check, null, tint = Color(0xFFFF5A36))
                             }
                         }
                     }
