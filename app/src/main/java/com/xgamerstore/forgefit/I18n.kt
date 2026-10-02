@@ -13,9 +13,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -131,8 +131,9 @@ fun Text(
     style: TextStyle = LocalTextStyle.current
 ) {
     val language = ForgeLang.current
-    val shown by produceState(initialValue = text, text, language) {
-        value = ForgeLang.translate(text, language)
+    var shown by remember(text, language) { mutableStateOf(text) }
+    LaunchedEffect(text, language) {
+        shown = ForgeLang.translate(text, language)
     }
     androidx.compose.material3.Text(
         text = shown,
