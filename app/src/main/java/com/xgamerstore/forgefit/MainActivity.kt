@@ -914,9 +914,9 @@ fun ProfileAction(icon:androidx.compose.ui.graphics.vector.ImageVector,title:Str
 fun SettingsPage(back:()->Unit,premium:()->Unit) {
     var reminders by remember { mutableStateOf(true) }
     Column(Modifier.fillMaxSize().background(Bg).verticalScroll(rememberScrollState()).padding(18.dp)) {
-        Row(verticalAlignment=Alignment.CenterVertically){IconButton(back){Icon(Icons.Default.ArrowBack,null)};Text("Nastavení",fontSize=28.sp,fontWeight=FontWeight.Black)}
+        Row(verticalAlignment=Alignment.CenterVertically){IconButton(back){Icon(Icons.Default.ArrowBack,null,tint=Color.White)};Text("Nastavení",fontSize=28.sp,fontWeight=FontWeight.Black,color=Color.White)}
         Surface(color=Color(0xFF251F2A),shape=RoundedCornerShape(18.dp),modifier=Modifier.fillMaxWidth().clickable{premium()}) {
-            Row(Modifier.padding(17.dp),verticalAlignment=Alignment.CenterVertically){Icon(Icons.Default.Star,null,tint=Gold);Spacer(Modifier.width(12.dp));Text("ForgeFit Premium",Modifier.weight(1f),fontWeight=FontWeight.Bold);Icon(Icons.Default.ChevronRight,null)}
+            Row(Modifier.padding(17.dp),verticalAlignment=Alignment.CenterVertically){Icon(Icons.Default.Star,null,tint=Gold);Spacer(Modifier.width(12.dp));Text("ForgeFit Premium",Modifier.weight(1f),fontWeight=FontWeight.Bold,color=Color.White);Icon(Icons.Default.ChevronRight,null,tint=Color.White)}
         }
         Spacer(Modifier.height(18.dp))
         Text("APLIKACE",color=Orange,fontWeight=FontWeight.Black)
@@ -934,14 +934,14 @@ fun SettingsPage(back:()->Unit,premium:()->Unit) {
 @Composable
 fun SettingToggle(title:String,sub:String,value:Boolean,set:(Boolean)->Unit){
     Row(Modifier.fillMaxWidth().padding(vertical=12.dp),verticalAlignment=Alignment.CenterVertically){
-        Column(Modifier.weight(1f)){Text(title,fontWeight=FontWeight.Bold);Text(sub,color=Muted,fontSize=12.sp)}
+        Column(Modifier.weight(1f)){Text(title,fontWeight=FontWeight.Bold,color=Color.White);Text(sub,color=Muted,fontSize=12.sp)}
         Switch(checked=value,onCheckedChange=set)
     }
 }
 @Composable
 fun SettingInfo(title:String,sub:String){
     Row(Modifier.fillMaxWidth().padding(vertical=12.dp),verticalAlignment=Alignment.CenterVertically){
-        Column(Modifier.weight(1f)){Text(title,fontWeight=FontWeight.Bold);Text(sub,color=Muted,fontSize=12.sp)}
+        Column(Modifier.weight(1f)){Text(title,fontWeight=FontWeight.Bold,color=Color.White);Text(sub,color=Muted,fontSize=12.sp)}
         Icon(Icons.Default.ChevronRight,null,tint=Muted)
     }
 }
