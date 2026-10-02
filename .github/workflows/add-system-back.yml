@@ -1,0 +1,98 @@
+name: Add system back navigation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/add-system-back.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Add Android system back gesture handling
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/xgamerstore/forgefit/MainActivity.kt')
+          s = p.read_text()
+
+          old = 'import androidx.activity.compose.setContent\n'
+          new = 'import androidx.activity.compose.setContent\nimport androidx.activity.compose.BackHandler\n'
+          if old not in s:
+              raise SystemExit('setContent import not found')
+          s = s.replace(old, new, 1)
+
+          old = '''fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
+    var step by remember { mutableIntStateOf(0) }
+    var u by remember { mutableStateOf(start) }
+    Column(Modifier.fillMaxSize().background(Bg).padding(20.dp)) {'''
+          new = '''fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
+    var step by remember { mutableIntStateOf(0) }
+    var u by remember { mutableStateOf(start) }
+    BackHandler(enabled = step > 0) { step-- }
+    Column(Modifier.fillMaxSize().background(Bg).padding(20.dp)) {'''
+          if old not in s:
+              raise SystemExit('Onboarding block not found')
+          s = s.replace(old, new, 1)
+
+          old = '''fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
+    var tab by remember { mutableIntStateOf(0) }
+    var training by remember { mutableStateOf(false) }
+    var extra by remember { mutableStateOf<String?>(null) }
+    if(training) { WorkoutScreen(profile,store){training=false}; return }
+    when(extra) {'''
+          new = '''fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
+    var tab by remember { mutableIntStateOf(0) }
+    var training by remember { mutableStateOf(false) }
+    var extra by remember { mutableStateOf<String?>(null) }
+
+    BackHandler(enabled = training || extra != null || tab != 0) {
+        when {
+            training -> training = false
+            extra == "premium" -> extra = "settings"
+            extra != null -> extra = null
+            tab != 0 -> tab = 0
+        }
+    }
+
+    if(training) { WorkoutScreen(profile,store){training=false}; return }
+    when(extra) {'''
+          if old not in s:
+              raise SystemExit('MainArea block not found')
+          s = s.replace(old, new, 1)
+
+          old = '''fun Library() {
+    var localSelected by remember { mutableStateOf<Exercise?>(null) }
+    var remoteSelected by remember { mutableStateOf<RemoteExercise?>(null) }
+    if(localSelected!=null) { Detail(localSelected!!){localSelected=null};return }
+    if(remoteSelected!=null) { RemoteDetail(remoteSelected!!){remoteSelected=null};return }'''
+          new = '''fun Library() {
+    var localSelected by remember { mutableStateOf<Exercise?>(null) }
+    var remoteSelected by remember { mutableStateOf<RemoteExercise?>(null) }
+
+    BackHandler(enabled = localSelected != null || remoteSelected != null) {
+        localSelected = null
+        remoteSelected = null
+    }
+
+    if(localSelected!=null) { Detail(localSelected!!){localSelected=null};return }
+    if(remoteSelected!=null) { RemoteDetail(remoteSelected!!){remoteSelected=null};return }'''
+          if old not in s:
+              raise SystemExit('Library block not found')
+          s = s.replace(old, new, 1)
+
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xgamerstore/forgefit/MainActivity.kt
+          git commit -m 'Support Android system back gesture throughout app'
+          git push origin main
