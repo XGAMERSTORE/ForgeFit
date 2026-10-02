@@ -81,25 +81,25 @@ val exerciseLibrary = listOf(
     Exercise("Dřep","Nohy • hýždě","Začátečník",3,12,0,50,
         "Chodidla na šířku ramen, kolena sledují špičky a hrudník drž vysoko.",
         "Nehrb záda a nenech kolena padat dovnitř."),
-    Exercise("Klik","Hrudník • triceps • core","Střední",3,10,0,60,
+    Exercise("Klik","Hrudník • triceps • střed těla","Střední",3,10,0,60,
         "Tělo drž v jedné linii. Hrudník spouštěj kontrolovaně k podlaze.",
         "Neprohýbej bedra a nezkracuj rozsah."),
-    Exercise("Plank","Core • ramena","Začátečník",3,0,35,40,
+    Exercise("Prkno","Střed těla • ramena","Začátečník",3,0,35,40,
         "Lokty dej pod ramena. Zpevni břicho a hýždě a drž rovnou linii.",
         "Nenech boky propadnout ani vyjet příliš vysoko."),
     Exercise("Výpad vzad","Nohy • hýždě","Začátečník",3,10,0,45,
         "Krokni vzad, přední chodidlo nech celé na zemi a klesej kolmo dolů.",
         "Přední koleno netlač dovnitř."),
-    Exercise("Jumping jack","Kondice • celé tělo","Začátečník",3,0,40,30,
+    Exercise("Panák","Kondice • celé tělo","Začátečník",3,0,40,30,
         "Skákej lehce, současně roznož a zvedni ruce nad hlavu.",
         "Nedopadej tvrdě na propnutá kolena."),
-    Exercise("Glute bridge","Hýždě • zadní stehna","Začátečník",3,15,0,40,
+    Exercise("Most na hýždě","Hýždě • zadní stehna","Začátečník",3,15,0,40,
         "Lehni na záda a vytlač pánev vzhůru přes paty.",
         "Nevytahuj pohyb z beder; nahoře zatni hýždě."),
     Exercise("Zkracovačky","Břicho","Začátečník",3,15,0,35,
         "Bedra nech na podložce a zvedej lopatky silou břicha.",
         "Netahej hlavu rukama."),
-    Exercise("Mountain climber","Core • kondice","Střední",3,0,35,35,
+    Exercise("Horolezec","Střed těla • kondice","Střední",3,0,35,35,
         "Ve vysokém prkně střídavě přitahuj kolena k hrudníku.",
         "Drž ramena nad dlaněmi a boky stabilní."),
     Exercise("Sumo dřep","Nohy • vnitřní stehna • hýždě","Začátečník",3,12,0,50,
@@ -111,7 +111,7 @@ val exerciseLibrary = listOf(
     Exercise("Bulharský dřep","Nohy • hýždě","Střední",3,10,0,60,
         "Zadní nohu polož na vyvýšení a přední nohou kontrolovaně klesej.",
         "Nepadni trupem dopředu a nenech koleno utíkat dovnitř."),
-    Exercise("Wall sit","Nohy • kvadricepsy","Začátečník",3,0,40,40,
+    Exercise("Sed u zdi","Nohy • kvadricepsy","Začátečník",3,0,40,40,
         "Opři záda o stěnu a drž kolena přibližně v pravém úhlu.",
         "Nevytahuj boky výš, když začne cvik pálit."),
     Exercise("Výpony na lýtka","Lýtka","Začátečník",3,18,0,35,
@@ -123,49 +123,49 @@ val exerciseLibrary = listOf(
     Exercise("Diamantový klik","Triceps • hrudník","Pokročilý",3,8,0,70,
         "Dlaně dej blízko pod hrudník a lokty drž u těla.",
         "Neotevírej lokty příliš do stran."),
-    Exercise("Pike push-up","Ramena • triceps","Střední",3,10,0,60,
+    Exercise("Klik ve střeše","Ramena • triceps","Střední",3,10,0,60,
         "Boky dej vysoko do tvaru obráceného V a hlavu spouštěj mezi dlaně.",
         "Neztrácej pevný střed těla."),
-    Exercise("Superman","Záda • hýždě","Začátečník",3,12,0,40,
+    Exercise("Zvedání paží a nohou vleže","Záda • hýždě","Začátečník",3,12,0,40,
         "Lehni na břicho a současně zvedni paže i nohy jen do příjemného rozsahu.",
         "Nepřeháněj záklon v bedrech."),
-    Exercise("Bird dog","Core • záda","Začátečník",3,10,0,35,
+    Exercise("Vzpažení a zanožení na čtyřech","Střed těla • záda","Začátečník",3,10,0,35,
         "Na čtyřech natahuj opačnou paži a nohu a drž pánev stabilní.",
         "Nevytáčej boky do strany."),
-    Exercise("Dead bug","Core","Začátečník",3,10,0,35,
+    Exercise("Mrtvý brouk","Střed těla","Začátečník",3,10,0,35,
         "Bedra přitlač k podložce a střídavě spouštěj opačnou ruku a nohu.",
         "Jakmile se bedra odlepí, zkrať rozsah."),
-    Exercise("Side plank","Šikmé břišní svaly • ramena","Střední",3,0,30,40,
+    Exercise("Boční prkno","Šikmé břišní svaly • ramena","Střední",3,0,30,40,
         "Loket drž pod ramenem a tělo v jedné linii od hlavy k patám.",
         "Nenech boky propadnout k zemi."),
-    Exercise("Russian twist","Břicho • šikmé břišní svaly","Střední",3,16,0,40,
+    Exercise("Ruské otáčení","Břicho • šikmé břišní svaly","Střední",3,16,0,40,
         "Sedni si, lehce zakloň trup a otáčej hrudník ze strany na stranu.",
         "Neotáčej pouze pažemi bez pohybu trupu."),
-    Exercise("High knees","Kondice • core","Střední",3,0,40,30,
+    Exercise("Běh s vysokými koleny","Kondice • střed těla","Střední",3,0,40,30,
         "Běž na místě a zvedej kolena svižně vzhůru při aktivní práci paží.",
         "Nezakláněj trup a nedupej."),
-    Exercise("Burpee","Celé tělo • kondice","Pokročilý",3,10,0,70,
+    Exercise("Angličák","Celé tělo • kondice","Pokročilý",3,10,0,70,
         "Z postoje přejdi do opory, vrať nohy vpřed a zakonči výskokem.",
         "Nepropadej se v bedrech při přechodu do prkna."),
-    Exercise("Bear crawl","Core • ramena • celé tělo","Střední",3,0,35,45,
+    Exercise("Medvědí chůze","Střed těla • ramena • celé tělo","Střední",3,0,35,45,
         "Na čtyřech zvedni kolena těsně nad zem a postupuj protilehlou rukou a nohou.",
         "Nehoupej boky ze strany na stranu."),
-    Exercise("Donkey kick","Hýždě","Začátečník",3,14,0,35,
+    Exercise("Zanožování na čtyřech","Hýždě","Začátečník",3,14,0,35,
         "Na čtyřech tlač patu vzhůru a drž pánev rovně.",
         "Nevytáčej kyčel a neprohýbej bedra."),
-    Exercise("Fire hydrant","Hýždě • boky","Začátečník",3,14,0,35,
+    Exercise("Unožování na čtyřech","Hýždě • boky","Začátečník",3,14,0,35,
         "Na čtyřech zvedej pokrčené koleno do strany bez rotace trupu.",
         "Nepřenášej váhu prudce na druhou stranu."),
-    Exercise("Hip hinge","Zadní stehna • hýždě • záda","Začátečník",3,12,0,45,
+    Exercise("Předklon v kyčlích","Zadní stehna • hýždě • záda","Začátečník",3,12,0,45,
         "Posouvej boky dozadu s rovnými zády, jako bys zavíral dveře hýžděmi.",
         "Nedělej z pohybu dřep a nekulať bedra."),
-    Exercise("Reverse crunch","Spodní část břicha","Střední",3,12,0,40,
+    Exercise("Obrácené zkracovačky","Spodní část břicha","Střední",3,12,0,40,
         "Přitahuj kolena k hrudníku a lehce zvedni pánev z podložky.",
         "Nehoupej nohama a nepoužívej setrvačnost."),
-    Exercise("Plank shoulder tap","Core • ramena","Střední",3,16,0,40,
+    Exercise("Dotyky ramen v prkně","Střed těla • ramena","Střední",3,16,0,40,
         "Ve vysokém prkně střídavě dotýkej opačného ramene a drž pánev bez rotace.",
         "Neroztáčej boky při každém doteku."),
-    Exercise("Skater","Kondice • nohy","Střední",3,0,40,35,
+    Exercise("Bruslařské přeskoky","Kondice • nohy","Střední",3,0,40,35,
         "Přeskakuj do stran z jedné nohy na druhou a dopadej měkce.",
         "Nedopadej na ztuhlou nohu.")
 )
@@ -181,7 +181,7 @@ fun workoutFor(profile: UserProfile): List<Exercise> {
         when {
             "Nohy" in profile.focus -> e.muscle.contains("Nohy")
             "Hýždě" in profile.focus -> e.muscle.contains("Hýždě")
-            "Břicho" in profile.focus -> e.muscle.contains("Břicho") || e.muscle.contains("Core")
+            "Břicho" in profile.focus -> e.muscle.contains("Břicho") || e.muscle.contains("Střed těla")
             "Hrudník" in profile.focus -> e.muscle.contains("Hrudník")
             "Záda" in profile.focus -> e.muscle.contains("Záda")
             "Ramena" in profile.focus -> e.muscle.contains("ramena", ignoreCase = true) || e.muscle.contains("Ramena")
@@ -570,13 +570,13 @@ fun Library() {
         if(error!=null) item { Note("Online katalog není dostupný. Offline cviky fungují dál.") }
 
         if(filteredOnline.isNotEmpty()) {
-            item { Text("Online katalog • "+filteredOnline.size+" výsledků",fontSize=18.sp,fontWeight=FontWeight.Bold) }
+            item { Text("Internetový katalog • "+filteredOnline.size+" výsledků",fontSize=18.sp,fontWeight=FontWeight.Bold) }
             items(filteredOnline.take(250)){e->RemoteExerciseCard(e){remoteSelected=e}}
         } else {
             val local = if(query.isBlank()) exerciseLibrary else exerciseLibrary.filter {
                 it.name.contains(query,true) || it.muscle.contains(query,true)
             }
-            item { Text("Offline knihovna • "+local.size+" cviků",fontSize=18.sp,fontWeight=FontWeight.Bold) }
+            item { Text("Místní knihovna • "+local.size+" cviků",fontSize=18.sp,fontWeight=FontWeight.Bold) }
             items(local){e->ExerciseCard(e){localSelected=e}}
         }
     }
@@ -685,64 +685,119 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
     var done by remember{mutableStateOf(false)}
     var rpe by remember{mutableIntStateOf(8)}
     val e=plan[i.coerceAtMost(plan.lastIndex)]
-    LaunchedEffect(rest){if(rest>0){delay(1000);rest--}}
+
+    LaunchedEffect(rest) {
+        if(rest>0) {
+            delay(1000)
+            rest--
+        }
+    }
+
     if(done) {
-        Column(Modifier.fillMaxSize().background(Bg).padding(24.dp),horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.Center) {
+        Column(
+            Modifier.fillMaxSize().background(Bg).padding(24.dp),
+            horizontalAlignment=Alignment.CenterHorizontally,
+            verticalArrangement=Arrangement.Center
+        ) {
             Icon(Icons.Default.EmojiEvents,null,Modifier.size(80.dp),tint=Gold)
-            Text("Forge dokončen.",fontSize=30.sp,fontWeight=FontWeight.Black)
+            Text("Trénink dokončen",fontSize=30.sp,fontWeight=FontWeight.Black,color=Color.White)
             Text(totalSets.toString()+" sérií • "+totalReps+" opakování",color=Muted)
             Spacer(Modifier.height(22.dp))
             Button({
                 store.addWorkout(profile.minutes,totalSets,totalReps)
                 close()
-            },Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange)){Text("ULOŽIT TRÉNINK")}
-        };return
+            },Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange)) {
+                Text("ULOŽIT TRÉNINK")
+            }
+        }
+        return
     }
+
     Column(Modifier.fillMaxSize().background(Bg).padding(18.dp)) {
-        Row(verticalAlignment=Alignment.CenterVertically){
-            IconButton(close){Icon(Icons.Default.Close,null)}
+        Row(verticalAlignment=Alignment.CenterVertically) {
+            IconButton(close){Icon(Icons.Default.Close,null,tint=Color.White)}
             Text((i+1).toString()+"/"+plan.size,color=Muted)
             Spacer(Modifier.weight(1f))
-            Text("Série "+set+"/"+e.sets)
+            Text("Série "+set+"/"+e.sets,color=Color.White)
         }
-        LinearProgressIndicator(progress={ (i+(set.toFloat()/e.sets))/plan.size },modifier=Modifier.fillMaxWidth(),color=Orange,trackColor=Panel2)
-        Spacer(Modifier.height(18.dp))
-        Text(e.name,fontSize=32.sp,fontWeight=FontWeight.Black)
+        LinearProgressIndicator(
+            progress={ (i+(set.toFloat()/e.sets))/plan.size },
+            modifier=Modifier.fillMaxWidth(),
+            color=Orange,
+            trackColor=Panel2
+        )
+        Spacer(Modifier.height(14.dp))
+        Text(e.name,fontSize=30.sp,fontWeight=FontWeight.Black,color=Color.White)
         Text(e.muscle,color=Gold)
-        Spacer(Modifier.height(12.dp))
-        Surface(color=Panel,shape=RoundedCornerShape(24.dp),modifier=Modifier.fillMaxWidth().weight(1f)) {
-            Column(horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.Center) {
-                ExerciseVisual(e.name,Modifier.size(240.dp))
-                Spacer(Modifier.height(12.dp))
-                Text(if(e.seconds>0)e.seconds.toString()+" SEKUND" else e.reps.toString()+" OPAKOVÁNÍ",fontSize=24.sp,fontWeight=FontWeight.Black)
+        Spacer(Modifier.height(10.dp))
+
+        Surface(
+            color=Panel,
+            shape=RoundedCornerShape(24.dp),
+            modifier=Modifier.fillMaxWidth().weight(1f)
+        ) {
+            Column(
+                horizontalAlignment=Alignment.CenterHorizontally,
+                verticalArrangement=Arrangement.Center,
+                modifier=Modifier.padding(vertical=10.dp)
+            ) {
+                ExerciseVisual(e.name,Modifier.size(220.dp))
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    if(e.seconds>0)e.seconds.toString()+" SEKUND" else e.reps.toString()+" OPAKOVÁNÍ",
+                    fontSize=24.sp,
+                    fontWeight=FontWeight.Black,
+                    color=Color.White
+                )
                 Text(e.technique,Modifier.padding(horizontal=22.dp),textAlign=TextAlign.Center,color=Muted)
             }
         }
-        Spacer(Modifier.height(10.dp))
+
+        Spacer(Modifier.height(8.dp))
         Text("Jak těžká byla série? RPE "+rpe,color=Muted,fontSize=12.sp)
         Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
             (6..10).forEach { x ->
                 FilterChip(selected=rpe==x,onClick={rpe=x},label={Text(x.toString())},modifier=Modifier.weight(1f))
             }
         }
-        Spacer(Modifier.height(8.dp))
-        if(rest>0) {
-            Surface(color=Panel2,shape=RoundedCornerShape(18.dp),modifier=Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(14.dp),horizontalAlignment=Alignment.CenterHorizontally){
-                    Text("PAUZA",color=Muted)
-                    Text(rest.toString()+" s",fontSize=38.sp,fontWeight=FontWeight.Black,color=Gold)
-                    TextButton({rest=0}){Text("Přeskočit")}
+        Spacer(Modifier.height(6.dp))
+
+        // Stejná výška při cvičení i pauze: horní část obrazovky už neposkakuje.
+        Box(
+            Modifier.fillMaxWidth().height(126.dp),
+            contentAlignment=Alignment.Center
+        ) {
+            if(rest>0) {
+                Surface(color=Panel2,shape=RoundedCornerShape(18.dp),modifier=Modifier.fillMaxSize()) {
+                    Column(
+                        Modifier.padding(10.dp),
+                        horizontalAlignment=Alignment.CenterHorizontally,
+                        verticalArrangement=Arrangement.Center
+                    ) {
+                        Text("PAUZA",color=Muted,fontSize=13.sp)
+                        Text(rest.toString()+" s",fontSize=34.sp,fontWeight=FontWeight.Black,color=Gold)
+                        TextButton({rest=0}){Text("Přeskočit")}
+                    }
+                }
+            } else {
+                Button({
+                    store.saveRpe(rpe)
+                    totalSets++
+                    if(e.seconds==0) totalReps+=e.reps
+                    if(set<e.sets) {
+                        set++
+                        rest=e.rest
+                    } else if(i<plan.lastIndex) {
+                        i++
+                        set=1
+                        rest=e.rest
+                    } else done=true
+                },Modifier.fillMaxWidth().height(58.dp),colors=ButtonDefaults.buttonColors(containerColor=Orange)) {
+                    Icon(Icons.Default.Check,null)
+                    Spacer(Modifier.width(6.dp))
+                    Text("SÉRIE HOTOVÁ",fontWeight=FontWeight.Black)
                 }
             }
-        } else Button({
-            store.saveRpe(rpe)
-            totalSets++
-            if(e.seconds==0)totalReps+=e.reps
-            if(set<e.sets){set++;rest=e.rest}
-            else if(i<plan.lastIndex){i++;set=1;rest=e.rest}
-            else done=true
-        },Modifier.fillMaxWidth().height(58.dp),colors=ButtonDefaults.buttonColors(containerColor=Orange)){
-            Icon(Icons.Default.Check,null);Spacer(Modifier.width(6.dp));Text("SÉRIE HOTOVÁ",fontWeight=FontWeight.Black)
         }
     }
 }
@@ -776,7 +831,7 @@ fun Stats(profile:UserProfile,store:FitStore) {
         item {
             Surface(color=Panel,shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp)) {
-                    Text("Svalová heatmapa plánu",fontSize=19.sp,fontWeight=FontWeight.Bold)
+                    Text("Svalové zatížení plánu",fontSize=19.sp,fontWeight=FontWeight.Bold)
                     Text("Kde má dnešní plán největší důraz.",color=Muted,fontSize=12.sp)
                     Spacer(Modifier.height(12.dp))
                     val max=(heat.values.maxOrNull()?:1).coerceAtLeast(1)
@@ -871,8 +926,8 @@ fun SettingsPage(back:()->Unit,premium:()->Unit) {
         SettingInfo("Jazyk","Čeština")
         Spacer(Modifier.height(18.dp))
         Text("DATA",color=Orange,fontWeight=FontWeight.Black)
-        SettingInfo("Offline profil","Zapnuto")
-        SettingInfo("Online knihovna","Free Exercise DB")
+        SettingInfo("Místní profil","Zapnuto")
+        SettingInfo("Internetová knihovna","Free Exercise DB")
     }
 }
 
@@ -905,7 +960,7 @@ fun PremiumPage(back:()->Unit) {
                     Row(Modifier.fillMaxWidth().padding(vertical=6.dp)){Text("✓",color=Gold,fontWeight=FontWeight.Black);Spacer(Modifier.width(10.dp));Text(it)}
                 }
                 Spacer(Modifier.height(18.dp))
-                Button({},enabled=false,modifier=Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange)){Text("PŘIPOJIT GOOGLE PLAY BILLING")}
+                Button({},enabled=false,modifier=Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange)){Text("PŘIPOJIT PLATBY GOOGLE PLAY")}
                 Text("Nákup se zpřístupní až po založení produktu v Google Play Console.",color=Muted,fontSize=11.sp,textAlign=TextAlign.Center,modifier=Modifier.padding(top=8.dp))
             }
         }

@@ -91,7 +91,7 @@ fun czExerciseName(name: String): String {
     val exact = mapOf(
         "90/90 Hamstring" to "90/90 protažení zadních stehen",
         "Adductor/Groin" to "Přitahovače stehen / třísla",
-        "Advanced Kettlebell Windmill" to "Pokročilý kettlebell windmill",
+        "Advanced Kettlebell Windmill" to "Pokročilý větrný mlýn s kettlebellem",
         "Air Bike" to "Šlapání ve vzduchu",
         "All Fours Quad Stretch" to "Protažení kvadricepsu na čtyřech",
         "Alternate Hammer Curl" to "Střídavý kladivový zdvih",
@@ -104,8 +104,8 @@ fun czExerciseName(name: String): String {
         "Jumping Jack" to "Panák",
         "Mountain Climbers" to "Horolezec",
         "Glute Bridge" to "Most na hýždě",
-        "Burpee" to "Burpee",
-        "High Knees" to "Vysoká kolena"
+        "Burpee" to "Angličák",
+        "High Knees" to "Běh s vysokými koleny"
     )
     exact[name]?.let { return it }
 
@@ -185,7 +185,7 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
         fun floor(y: Float = h * .83f) = drawLine(VisualFloor, Offset(w * .1f, y), Offset(w * .9f, y), sw * .45f, cap = StrokeCap.Round)
 
         when {
-            "plank" in name || "prkno" in name || "mountain" in name || "horolezec" in name || "shoulder tap" in name -> {
+            "plank" in name || "prkno" in name || "mountain" in name || "horolezec" in name || "shoulder tap" in name || "dotyky ramen" in name -> {
                 floor()
                 val hipY = h * (.53f + .025f * p)
                 val shoulder = Offset(w * .38f, h * .52f)
@@ -205,7 +205,7 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
                     line(hip, Offset(w * .73f, h * .78f)); line(hip, heel)
                 }
             }
-            "side plank" in name -> {
+            "side plank" in name || "boční prkno" in name -> {
                 floor()
                 val shoulder = Offset(w * .36f, h * .48f)
                 val hip = Offset(w * .58f, h * (.54f - .03f * p))
@@ -225,7 +225,7 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
                 line(shoulder, hip); line(hip, feet)
                 line(shoulder, Offset(w * .32f, h * .77f)); line(shoulder, Offset(w * .45f, h * .77f))
             }
-            "dřep" in name || "squat" in name || "wall sit" in name -> {
+            "dřep" in name || "squat" in name || "wall sit" in name || "sed u zdi" in name -> {
                 floor()
                 val hipY = h * (.50f + .15f * p)
                 head(Offset(w * .50f, hipY - h * .31f))
@@ -237,7 +237,7 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
                 val kneeR = Offset(w * .66f, hipY + h * .13f)
                 line(hip, kneeL); line(kneeL, Offset(w * .29f, h * .82f))
                 line(hip, kneeR); line(kneeR, Offset(w * .71f, h * .82f))
-                if ("wall sit" in name) line(Offset(w * .72f, h * .18f), Offset(w * .72f, h * .83f), VisualFloor)
+                if ("wall sit" in name || "sed u zdi" in name) line(Offset(w * .72f, h * .18f), Offset(w * .72f, h * .83f), VisualFloor)
             }
             "výpad" in name || "lunge" in name || "bulhars" in name -> {
                 floor()
@@ -256,7 +256,7 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
                 val knee = Offset(w * .70f, h * .58f)
                 head(Offset(w * .16f, h * .66f)); line(shoulder, hip); line(hip, knee); line(knee, Offset(w * .80f, h * .76f))
             }
-            "crunch" in name || "zkrac" in name || "dead bug" in name || "russian" in name -> {
+            "crunch" in name || "zkrac" in name || "dead bug" in name || "mrtvý brouk" in name || "russian" in name || "ruské otáčení" in name -> {
                 floor(h * .76f)
                 val hip = Offset(w * .49f, h * .67f)
                 val shoulder = Offset(w * (.34f + .05f * p), h * (.61f - .09f * p))
@@ -265,14 +265,14 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
                 val knee = Offset(w * .67f, h * .55f); line(hip, knee); line(knee, Offset(w * .78f, h * .76f))
                 line(shoulder, Offset(w * .57f, h * .48f))
             }
-            "superman" in name -> {
+            "superman" in name || "zvedání paží a nohou" in name -> {
                 floor(h * .73f)
                 val bodyY = h * (.62f - .05f * p)
                 head(Offset(w * .30f, bodyY - h * .02f)); line(Offset(w * .36f, bodyY), Offset(w * .60f, bodyY))
                 line(Offset(w * .38f, bodyY), Offset(w * .17f, bodyY - h * .16f))
                 line(Offset(w * .60f, bodyY), Offset(w * .82f, bodyY - h * .13f))
             }
-            "bird dog" in name || "bear crawl" in name || "donkey" in name || "hydrant" in name -> {
+            "bird dog" in name || "vzpažení a zanožení" in name || "bear crawl" in name || "medvědí chůze" in name || "donkey" in name || "zanožování" in name || "hydrant" in name || "unožování" in name -> {
                 floor()
                 val shoulder = Offset(w * .38f, h * .48f); val hip = Offset(w * .59f, h * .53f)
                 head(Offset(w * .28f, h * .43f)); line(shoulder, hip)
@@ -286,7 +286,7 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
                     line(hip, Offset(w * .72f, h * .72f)); line(Offset(w * .72f, h * .72f), Offset(w * .79f, h * .81f))
                 }
             }
-            "jump" in name || "high knees" in name || "skater" in name || "burpee" in name -> {
+            "jump" in name || "panák" in name || "high knees" in name || "vysokými koleny" in name || "skater" in name || "bruslařské" in name || "burpee" in name || "angličák" in name -> {
                 floor()
                 val y = h * (.47f - .06f * p)
                 head(Offset(w * .50f, y - h * .23f)); val neck = Offset(w * .50f, y - h * .15f); val hip = Offset(w * .50f, y + h * .08f)
@@ -294,7 +294,7 @@ fun ExerciseVisual(exerciseName: String, modifier: Modifier = Modifier) {
                 val armSpread = w * (.17f + .13f * p); line(Offset(w*.50f,y-h*.08f), Offset(w*.50f-armSpread,y-h*(.08f+.22f*p))); line(Offset(w*.50f,y-h*.08f), Offset(w*.50f+armSpread,y-h*(.08f+.22f*p)))
                 val legSpread = w * (.10f + .14f * p); line(hip, Offset(w*.50f-legSpread,h*.80f)); line(hip, Offset(w*.50f+legSpread,h*.80f))
             }
-            "hinge" in name -> {
+            "hinge" in name || "předklon v kyčlích" in name -> {
                 floor()
                 val hip = Offset(w * .52f, h * .54f); val shoulder = Offset(w * (.43f - .10f * p), h * (.36f + .12f * p))
                 head(Offset(shoulder.x - w*.06f, shoulder.y - h*.08f)); line(shoulder, hip)
