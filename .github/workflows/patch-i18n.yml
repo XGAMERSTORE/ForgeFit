@@ -1,0 +1,50 @@
+name: Patch ForgeFit i18n
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-i18n.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Wire language system into app
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/xgamerstore/forgefit/MainActivity.kt')
+          s = p.read_text()
+
+          old = '''    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {'''
+          new = '''    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ForgeLang.init(this)
+        setContent {'''
+          if old not in s:
+              raise SystemExit('MainActivity onCreate block not found')
+          s = s.replace(old, new, 1)
+
+          old = '        SettingInfo("Jazyk","Čeština")'
+          new = '        LanguageSettingRow()'
+          if old not in s:
+              raise SystemExit('Language setting row not found')
+          s = s.replace(old, new, 1)
+
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xgamerstore/forgefit/MainActivity.kt
+          git commit -m 'Wire 59-language selector and runtime translation'
+          git push origin main
