@@ -492,7 +492,7 @@ fun SmallStat(v:String,l:String,m:Modifier=Modifier){Surface(color=Panel,shape=R
 fun ExerciseCard(e:Exercise,click:(()->Unit)?=null) {
     Surface(color=Panel,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth().then(if(click==null)Modifier else Modifier.clickable{click()})) {
         Row(Modifier.padding(12.dp),verticalAlignment=Alignment.CenterVertically) {
-            Demo(Modifier.size(62.dp))
+            ExerciseVisual(e.name,Modifier.size(62.dp))
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(e.name,fontWeight=FontWeight.Bold);Text(e.muscle,color=Muted,fontSize=12.sp)
@@ -594,24 +594,27 @@ suspend fun loadRemoteExercises(): List<RemoteExercise> = withContext(Dispatcher
         else null
         val primary = o.optJSONArray("primaryMuscles")
         val muscles = buildList {
-            if(primary!=null) for(j in 0 until primary.length()) add(primary.getString(j))
-        }.joinToString(", ")
+            if(primary!=null) for(j in 0 until primary.length()) add(cleanRemoteText(primary.optString(j)))
+        }.filter { it.isNotBlank() }.joinToString(", ")
         val inst = o.optJSONArray("instructions")
         val instructions = buildString {
             if(inst!=null) for(j in 0 until inst.length()) {
-                if(isNotEmpty()) append("\n\n")
-                append(inst.getString(j))
+                val line=cleanRemoteText(inst.optString(j))
+                if(line.isNotBlank()) {
+                    if(isNotEmpty()) append("\n\n")
+                    append(line)
+                }
             }
         }
-        result.add(RemoteExercise(
-            name=o.optString("name","Cvik"),
-            level=o.optString("level",""),
-            category=o.optString("category",""),
-            equipment=o.optString("equipment","Bez vybavení"),
+        result.add(localizedRemoteExercise(RemoteExercise(
+            name=cleanRemoteText(o.optString("name"),"Cvik"),
+            level=cleanRemoteText(o.optString("level")),
+            category=cleanRemoteText(o.optString("category")),
+            equipment=cleanRemoteText(o.optString("equipment"),"Bez vybavení"),
             muscles=muscles,
             instructions=instructions,
             imageUrl=img
-        ))
+        )))
     }
     result
 }
@@ -627,7 +630,7 @@ fun RemoteExerciseCard(e:RemoteExercise,click:()->Unit) {
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(e.name,fontWeight=FontWeight.Bold,maxLines=2)
-                Text(listOf(e.muscles,e.equipment).filter{it.isNotBlank()}.joinToString(" • "),color=Muted,fontSize=12.sp,maxLines=2)
+                Text(listOf(e.muscles,e.equipment,e.category).filter{it.isNotBlank()}.joinToString(" • "),color=Muted,fontSize=12.sp,maxLines=2)
                 if(e.level.isNotBlank()) Text(e.level,color=Gold,fontSize=12.sp)
             }
             Icon(Icons.Default.ChevronRight,null,tint=Muted)
@@ -640,7 +643,7 @@ fun RemoteDetail(e:RemoteExercise,back:()->Unit) {
     Column(Modifier.fillMaxSize().background(Bg).verticalScroll(rememberScrollState()).padding(18.dp)) {
         IconButton(back){Icon(Icons.Default.ArrowBack,null)}
         Text(e.name,fontSize=30.sp,fontWeight=FontWeight.Black)
-        Text(listOf(e.muscles,e.equipment,e.level).filter{it.isNotBlank()}.joinToString(" • "),color=Gold)
+        Text(listOf(e.muscles,e.equipment,e.category,e.level).filter{it.isNotBlank()}.joinToString(" • "),color=Gold)
         Spacer(Modifier.height(14.dp))
         Surface(color=Panel,shape=RoundedCornerShape(22.dp),modifier=Modifier.fillMaxWidth().height(280.dp)) {
             if(e.imageUrl!=null) AsyncImage(model=e.imageUrl,contentDescription=e.name,contentScale=ContentScale.Fit)
@@ -650,7 +653,7 @@ fun RemoteDetail(e:RemoteExercise,back:()->Unit) {
         Text("Technika",fontSize=19.sp,fontWeight=FontWeight.Bold)
         Text(if(e.instructions.isBlank()) "Instrukce nejsou u tohoto záznamu dostupné." else e.instructions,color=Muted)
         Spacer(Modifier.height(18.dp))
-        Note("Online katalog slouží jako knihovna cviků. Dnešní automatický plán používá ověřený offline základ, aby fungoval i bez internetu.")
+        Note("Název, obtížnost, svaly a vybavení jsou lokalizované do češtiny. Podrobné pokyny online databáze mohou být u některých cviků stále v původním jazyce.")
     }
 }
 
@@ -661,7 +664,7 @@ fun Detail(e:Exercise,back:()->Unit) {
         Text(e.name,fontSize=30.sp,fontWeight=FontWeight.Black);Text(e.muscle,color=Gold);Spacer(Modifier.height(14.dp))
         Surface(color=Panel,shape=RoundedCornerShape(22.dp),modifier=Modifier.fillMaxWidth().height(240.dp)) {
             Column(horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.Center) {
-                Demo(Modifier.size(190.dp));Text("Offline animovaná ukázka",color=Muted,fontSize=12.sp)
+                ExerciseVisual(e.name,Modifier.size(190.dp));Text("Animovaná ukázka pohybu",color=Muted,fontSize=12.sp)
             }
         }
         Spacer(Modifier.height(18.dp));Text("Technika",fontSize=19.sp,fontWeight=FontWeight.Bold);Text(e.technique)
@@ -709,7 +712,7 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
         Spacer(Modifier.height(12.dp))
         Surface(color=Panel,shape=RoundedCornerShape(24.dp),modifier=Modifier.fillMaxWidth().weight(1f)) {
             Column(horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.Center) {
-                Demo(Modifier.size(240.dp))
+                ExerciseVisual(e.name,Modifier.size(240.dp))
                 Spacer(Modifier.height(12.dp))
                 Text(if(e.seconds>0)e.seconds.toString()+" SEKUND" else e.reps.toString()+" OPAKOVÁNÍ",fontSize=24.sp,fontWeight=FontWeight.Black)
                 Text(e.technique,Modifier.padding(horizontal=22.dp),textAlign=TextAlign.Center,color=Muted)
