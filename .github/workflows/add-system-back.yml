@@ -21,72 +21,15 @@ jobs:
           from pathlib import Path
           p = Path('app/src/main/java/com/xgamerstore/forgefit/MainActivity.kt')
           s = p.read_text()
-
-          old = 'import androidx.activity.compose.setContent\n'
-          new = 'import androidx.activity.compose.setContent\nimport androidx.activity.compose.BackHandler\n'
-          if old not in s:
-              raise SystemExit('setContent import not found')
-          s = s.replace(old, new, 1)
-
-          old = '''fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
-    var step by remember { mutableIntStateOf(0) }
-    var u by remember { mutableStateOf(start) }
-    Column(Modifier.fillMaxSize().background(Bg).padding(20.dp)) {'''
-          new = '''fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
-    var step by remember { mutableIntStateOf(0) }
-    var u by remember { mutableStateOf(start) }
-    BackHandler(enabled = step > 0) { step-- }
-    Column(Modifier.fillMaxSize().background(Bg).padding(20.dp)) {'''
-          if old not in s:
-              raise SystemExit('Onboarding block not found')
-          s = s.replace(old, new, 1)
-
-          old = '''fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
-    var tab by remember { mutableIntStateOf(0) }
-    var training by remember { mutableStateOf(false) }
-    var extra by remember { mutableStateOf<String?>(null) }
-    if(training) { WorkoutScreen(profile,store){training=false}; return }
-    when(extra) {'''
-          new = '''fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
-    var tab by remember { mutableIntStateOf(0) }
-    var training by remember { mutableStateOf(false) }
-    var extra by remember { mutableStateOf<String?>(null) }
-
-    BackHandler(enabled = training || extra != null || tab != 0) {
-        when {
-            training -> training = false
-            extra == "premium" -> extra = "settings"
-            extra != null -> extra = null
-            tab != 0 -> tab = 0
-        }
-    }
-
-    if(training) { WorkoutScreen(profile,store){training=false}; return }
-    when(extra) {'''
-          if old not in s:
-              raise SystemExit('MainArea block not found')
-          s = s.replace(old, new, 1)
-
-          old = '''fun Library() {
-    var localSelected by remember { mutableStateOf<Exercise?>(null) }
-    var remoteSelected by remember { mutableStateOf<RemoteExercise?>(null) }
-    if(localSelected!=null) { Detail(localSelected!!){localSelected=null};return }
-    if(remoteSelected!=null) { RemoteDetail(remoteSelected!!){remoteSelected=null};return }'''
-          new = '''fun Library() {
-    var localSelected by remember { mutableStateOf<Exercise?>(null) }
-    var remoteSelected by remember { mutableStateOf<RemoteExercise?>(null) }
-
-    BackHandler(enabled = localSelected != null || remoteSelected != null) {
-        localSelected = null
-        remoteSelected = null
-    }
-
-    if(localSelected!=null) { Detail(localSelected!!){localSelected=null};return }
-    if(remoteSelected!=null) { RemoteDetail(remoteSelected!!){remoteSelected=null};return }'''
-          if old not in s:
-              raise SystemExit('Library block not found')
-          s = s.replace(old, new, 1)
-
+          pairs = []
+          pairs.append(("import androidx.activity.compose.setContent\n", "import androidx.activity.compose.setContent\nimport androidx.activity.compose.BackHandler\n"))
+          pairs.append(("fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {\n    var step by remember { mutableIntStateOf(0) }\n    var u by remember { mutableStateOf(start) }\n    Column(Modifier.fillMaxSize().background(Bg).padding(20.dp)) {", "fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {\n    var step by remember { mutableIntStateOf(0) }\n    var u by remember { mutableStateOf(start) }\n    BackHandler(enabled = step > 0) { step-- }\n    Column(Modifier.fillMaxSize().background(Bg).padding(20.dp)) {"))
+          pairs.append(("fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {\n    var tab by remember { mutableIntStateOf(0) }\n    var training by remember { mutableStateOf(false) }\n    var extra by remember { mutableStateOf<String?>(null) }\n    if(training) { WorkoutScreen(profile,store){training=false}; return }\n    when(extra) {", "fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {\n    var tab by remember { mutableIntStateOf(0) }\n    var training by remember { mutableStateOf(false) }\n    var extra by remember { mutableStateOf<String?>(null) }\n\n    BackHandler(enabled = training || extra != null || tab != 0) {\n        when {\n            training -> training = false\n            extra == \"premium\" -> extra = \"settings\"\n            extra != null -> extra = null\n            tab != 0 -> tab = 0\n        }\n    }\n\n    if(training) { WorkoutScreen(profile,store){training=false}; return }\n    when(extra) {"))
+          pairs.append(("fun Library() {\n    var localSelected by remember { mutableStateOf<Exercise?>(null) }\n    var remoteSelected by remember { mutableStateOf<RemoteExercise?>(null) }\n    if(localSelected!=null) { Detail(localSelected!!){localSelected=null};return }\n    if(remoteSelected!=null) { RemoteDetail(remoteSelected!!){remoteSelected=null};return }", "fun Library() {\n    var localSelected by remember { mutableStateOf<Exercise?>(null) }\n    var remoteSelected by remember { mutableStateOf<RemoteExercise?>(null) }\n\n    BackHandler(enabled = localSelected != null || remoteSelected != null) {\n        localSelected = null\n        remoteSelected = null\n    }\n\n    if(localSelected!=null) { Detail(localSelected!!){localSelected=null};return }\n    if(remoteSelected!=null) { RemoteDetail(remoteSelected!!){remoteSelected=null};return }"))
+          for old, new in pairs:
+              if old not in s:
+                  raise SystemExit('Expected source block not found: ' + old[:70])
+              s = s.replace(old, new, 1)
           p.write_text(s)
           PY
       - name: Commit patch
