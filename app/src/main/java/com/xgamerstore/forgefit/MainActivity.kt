@@ -7,6 +7,7 @@ import android.content.Context
 import java.time.LocalDate
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -318,6 +319,7 @@ fun App(store: FitStore) {
 fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
     var step by remember { mutableIntStateOf(0) }
     var u by remember { mutableStateOf(start) }
+    BackHandler(enabled = step > 0) { step-- }
     Column(Modifier.fillMaxSize().background(Bg).padding(20.dp)) {
         Spacer(Modifier.height(26.dp))
         Text("FORGEFIT",color=Orange,fontWeight=FontWeight.Black)
@@ -420,6 +422,16 @@ fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
     var tab by remember { mutableIntStateOf(0) }
     var training by remember { mutableStateOf(false) }
     var extra by remember { mutableStateOf<String?>(null) }
+
+    BackHandler(enabled = training || extra != null || tab != 0) {
+        when {
+            training -> training = false
+            extra == "premium" -> extra = "settings"
+            extra != null -> extra = null
+            tab != 0 -> tab = 0
+        }
+    }
+
     if(training) { WorkoutScreen(profile,store){training=false}; return }
     when(extra) {
         "settings" -> { SettingsPage({extra=null},{extra="premium"}); return }
@@ -522,6 +534,12 @@ fun Demo(modifier:Modifier) {
 fun Library() {
     var localSelected by remember { mutableStateOf<Exercise?>(null) }
     var remoteSelected by remember { mutableStateOf<RemoteExercise?>(null) }
+
+    BackHandler(enabled = localSelected != null || remoteSelected != null) {
+        localSelected = null
+        remoteSelected = null
+    }
+
     if(localSelected!=null) { Detail(localSelected!!){localSelected=null};return }
     if(remoteSelected!=null) { RemoteDetail(remoteSelected!!){remoteSelected=null};return }
 
