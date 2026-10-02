@@ -288,7 +288,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme(colorScheme=darkColorScheme(primary=Orange,secondary=Gold,background=Bg,surface=Panel)) {
+            MaterialTheme(colorScheme=darkColorScheme(primary=Orange,onPrimary=Color.Black,secondary=Gold,onSecondary=Color.Black,background=Bg,onBackground=Color(0xFFF4F1F7),surface=Panel,onSurface=Color(0xFFF4F1F7),surfaceVariant=Panel2,onSurfaceVariant=Muted)) {
                 val store = remember { FitStore(this) }
                 App(store)
             }
