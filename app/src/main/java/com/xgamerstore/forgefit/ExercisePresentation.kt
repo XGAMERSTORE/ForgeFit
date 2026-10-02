@@ -15,10 +15,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 
-private val VisualBg = Color(0xFF20262E)
-private val VisualBody = Color(0xFFF4F1F7)
-private val VisualAccent = Color(0xFFFFB347)
-private val VisualFloor = Color(0xFF59636F)
+private val VisualBg = Color(0xFF18202A)
+private val VisualBody = Color(0xFFF7F8FA)
+private val VisualAccent = Color(0xFFFFC15A)
+private val VisualFloor = Color(0xFF6E7A88)
 
 fun cleanRemoteText(value: String?, fallback: String = ""): String {
     val v = value?.trim().orEmpty()

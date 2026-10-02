@@ -278,21 +278,51 @@ class FitStore(context: Context) {
 }
 
 
-private val Bg = Color(0xFF0B0D10)
-private val Panel = Color(0xFF15191F)
-private val Panel2 = Color(0xFF20262E)
-private val Orange = Color(0xFFFF5A36)
-private val Gold = Color(0xFFFFB347)
-private val Muted = Color(0xFF9AA4AF)
+private val Bg = Color(0xFF090B0F)
+private val Panel = Color(0xFF131820)
+private val Panel2 = Color(0xFF1D2530)
+private val Orange = Color(0xFFFF6B3D)
+private val Gold = Color(0xFFFFC15A)
+private val TextPrimary = Color(0xFFF7F8FA)
+private val Muted = Color(0xFFADB7C4)
+private val Outline = Color(0xFF3A4553)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ForgeLang.init(this)
         setContent {
-            MaterialTheme(colorScheme=darkColorScheme(primary=Orange,onPrimary=Color.Black,secondary=Gold,onSecondary=Color.Black,background=Bg,onBackground=Color(0xFFF4F1F7),surface=Panel,onSurface=Color(0xFFF4F1F7),surfaceVariant=Panel2,onSurfaceVariant=Muted)) {
-                val store = remember { FitStore(this) }
-                App(store)
+            MaterialTheme(
+                colorScheme = darkColorScheme(
+                    primary = Orange,
+                    onPrimary = Color(0xFF111111),
+                    primaryContainer = Color(0xFF4A2118),
+                    onPrimaryContainer = TextPrimary,
+                    secondary = Gold,
+                    onSecondary = Color(0xFF15120B),
+                    secondaryContainer = Color(0xFF3A2D16),
+                    onSecondaryContainer = TextPrimary,
+                    tertiary = Color(0xFF8ED1C5),
+                    onTertiary = Color(0xFF0B1715),
+                    background = Bg,
+                    onBackground = TextPrimary,
+                    surface = Panel,
+                    onSurface = TextPrimary,
+                    surfaceVariant = Panel2,
+                    onSurfaceVariant = Muted,
+                    error = Color(0xFFFF6B6B),
+                    onError = Color(0xFF1B0909),
+                    outline = Outline
+                )
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Bg,
+                    contentColor = TextPrimary
+                ) {
+                    val store = remember { FitStore(this) }
+                    App(store)
+                }
             }
         }
     }
@@ -333,7 +363,22 @@ fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
             when(step) {
                 0 -> Column(Modifier.verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(12.dp)) {
                     Title("1. O tobě")
-                    OutlinedTextField(u.name,{u=u.copy(name=it)},label={Text("Jméno / přezdívka")},modifier=Modifier.fillMaxWidth())
+                    OutlinedTextField(
+                        u.name,
+                        {u=u.copy(name=it)},
+                        label={Text("Jméno / přezdívka")},
+                        modifier=Modifier.fillMaxWidth(),
+                        textStyle=LocalTextStyle.current.copy(color=TextPrimary),
+                        colors=OutlinedTextFieldDefaults.colors(
+                            focusedTextColor=TextPrimary,
+                            unfocusedTextColor=TextPrimary,
+                            cursorColor=Orange,
+                            focusedBorderColor=Orange,
+                            unfocusedBorderColor=Outline,
+                            focusedLabelColor=Orange,
+                            unfocusedLabelColor=Muted
+                        )
+                    )
                     Stepper("Věk",u.age,"let",13,100){u=u.copy(age=it)}
                     Chips("Pohlaví",listOf("Muž","Žena","Nechci uvést"),u.sex){u=u.copy(sex=it)}
                 }
@@ -370,7 +415,7 @@ fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
         }
         Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(10.dp)) {
             if(step>0) OutlinedButton({step--},Modifier.weight(1f)){Text("Zpět")}
-            Button({if(step<5) step++ else finish(u)},Modifier.weight(1f),colors=ButtonDefaults.buttonColors(containerColor=Orange)) {
+            Button({if(step<5) step++ else finish(u)},Modifier.weight(1f),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)) {
                 Text(if(step<5) "Pokračovat" else "Vytvořit plán",fontWeight=FontWeight.Bold)
             }
         }
@@ -380,12 +425,12 @@ fun Onboarding(start:UserProfile, finish:(UserProfile)->Unit) {
 @Composable fun Title(t:String){Text(t,fontSize=22.sp,fontWeight=FontWeight.Bold)}
 @Composable
 fun Stepper(label:String,value:Int,suffix:String,min:Int,max:Int,step:Int=1,set:(Int)->Unit) {
-    Surface(color=Panel,shape=RoundedCornerShape(16.dp)) {
+    Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(16.dp)) {
         Row(Modifier.fillMaxWidth().padding(14.dp),verticalAlignment=Alignment.CenterVertically) {
             Column(Modifier.weight(1f)){Text(label,color=Muted,fontSize=12.sp);Text(value.toString()+" "+suffix,fontSize=21.sp,fontWeight=FontWeight.Bold)}
-            FilledIconButton({set((value-step).coerceAtLeast(min))},colors=IconButtonDefaults.filledIconButtonColors(containerColor=Panel2)){Icon(Icons.Default.Remove,null)}
+            FilledIconButton({set((value-step).coerceAtLeast(min))},colors=IconButtonDefaults.filledIconButtonColors(containerColor=Panel2,contentColor=TextPrimary)){Icon(Icons.Default.Remove,null)}
             Spacer(Modifier.width(8.dp))
-            FilledIconButton({set((value+step).coerceAtMost(max))},colors=IconButtonDefaults.filledIconButtonColors(containerColor=Orange)){Icon(Icons.Default.Add,null)}
+            FilledIconButton({set((value+step).coerceAtMost(max))},colors=IconButtonDefaults.filledIconButtonColors(containerColor=Orange,contentColor=Color(0xFF111111))){Icon(Icons.Default.Add,null)}
         }
     }
 }
@@ -473,13 +518,13 @@ fun Home(profile:UserProfile,store:FitStore,start:()->Unit) {
             Text("Cíl: "+profile.goal+" • "+profile.days+"× týdně",color=Muted)
         }
         item {
-            Surface(color=Panel,shape=RoundedCornerShape(24.dp)) {
+            Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(24.dp)) {
                 Column(Modifier.padding(18.dp)) {
                     Text("DNEŠNÍ FORGE",color=Orange,fontWeight=FontWeight.Black)
                     Text(profile.minutes.toString()+" minut • "+plan.size+" cviků",fontSize=23.sp,fontWeight=FontWeight.Bold)
                     Text(plan.sumOf{it.sets}.toString()+" pracovních sérií",color=Muted)
                     Spacer(Modifier.height(15.dp))
-                    Button(start,Modifier.fillMaxWidth().height(54.dp),colors=ButtonDefaults.buttonColors(containerColor=Orange)) {
+                    Button(start,Modifier.fillMaxWidth().height(54.dp),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)) {
                         Icon(Icons.Default.PlayArrow,null);Spacer(Modifier.width(6.dp));Text("ZAČÍT TRÉNINK",fontWeight=FontWeight.Black)
                     }
                 }
@@ -499,11 +544,11 @@ fun Home(profile:UserProfile,store:FitStore,start:()->Unit) {
 }
 
 @Composable
-fun SmallStat(v:String,l:String,m:Modifier=Modifier){Surface(color=Panel,shape=RoundedCornerShape(15.dp),modifier=m){Column(Modifier.padding(12.dp)){Text(v,fontSize=20.sp,fontWeight=FontWeight.Black,color=Gold);Text(l,color=Muted,fontSize=11.sp)}}}
+fun SmallStat(v:String,l:String,m:Modifier=Modifier){Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(15.dp),modifier=m){Column(Modifier.padding(12.dp)){Text(v,fontSize=20.sp,fontWeight=FontWeight.Black,color=Gold);Text(l,color=Muted,fontSize=11.sp)}}}
 
 @Composable
 fun ExerciseCard(e:Exercise,click:(()->Unit)?=null) {
-    Surface(color=Panel,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth().then(if(click==null)Modifier else Modifier.clickable{click()})) {
+    Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth().then(if(click==null)Modifier else Modifier.clickable{click()})) {
         Row(Modifier.padding(12.dp),verticalAlignment=Alignment.CenterVertically) {
             ExerciseVisual(e.name,Modifier.size(62.dp))
             Spacer(Modifier.width(12.dp))
@@ -574,12 +619,24 @@ fun Library() {
                 value=query,onValueChange={query=it},
                 modifier=Modifier.fillMaxWidth(),
                 singleLine=true,
+                textStyle=LocalTextStyle.current.copy(color=TextPrimary),
+                colors=OutlinedTextFieldDefaults.colors(
+                    focusedTextColor=TextPrimary,
+                    unfocusedTextColor=TextPrimary,
+                    cursorColor=Orange,
+                    focusedBorderColor=Orange,
+                    unfocusedBorderColor=Outline,
+                    focusedLabelColor=Orange,
+                    unfocusedLabelColor=Muted,
+                    focusedLeadingIconColor=Orange,
+                    unfocusedLeadingIconColor=Muted
+                ),
                 leadingIcon={Icon(Icons.Default.Search,null)},
                 label={Text("Hledat cvik, sval nebo vybavení")}
             )
         }
         if(loading) item {
-            Surface(color=Panel,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth()) {
+            Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth()) {
                 Row(Modifier.padding(16.dp),verticalAlignment=Alignment.CenterVertically){
                     CircularProgressIndicator(Modifier.size(22.dp),strokeWidth=3.dp)
                     Spacer(Modifier.width(12.dp));Text("Načítám online katalog…",color=Muted)
@@ -640,9 +697,9 @@ suspend fun loadRemoteExercises(): List<RemoteExercise> = withContext(Dispatcher
 
 @Composable
 fun RemoteExerciseCard(e:RemoteExercise,click:()->Unit) {
-    Surface(color=Panel,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth().clickable{click()}) {
+    Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth().clickable{click()}) {
         Row(Modifier.padding(12.dp),verticalAlignment=Alignment.CenterVertically) {
-            Surface(color=Panel2,shape=RoundedCornerShape(12.dp),modifier=Modifier.size(72.dp)) {
+            Surface(color=Panel2,contentColor=TextPrimary,tonalElevation=1.dp,shape=RoundedCornerShape(12.dp),modifier=Modifier.size(72.dp)) {
                 if(e.imageUrl!=null) AsyncImage(model=e.imageUrl,contentDescription=e.name,contentScale=ContentScale.Crop)
                 else Box(contentAlignment=Alignment.Center){Icon(Icons.Default.FitnessCenter,null,tint=Gold)}
             }
@@ -664,7 +721,7 @@ fun RemoteDetail(e:RemoteExercise,back:()->Unit) {
         Text(e.name,fontSize=30.sp,fontWeight=FontWeight.Black)
         Text(listOf(e.muscles,e.equipment,e.category,e.level).filter{it.isNotBlank()}.joinToString(" • "),color=Gold)
         Spacer(Modifier.height(14.dp))
-        Surface(color=Panel,shape=RoundedCornerShape(22.dp),modifier=Modifier.fillMaxWidth().height(280.dp)) {
+        Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(22.dp),modifier=Modifier.fillMaxWidth().height(280.dp)) {
             if(e.imageUrl!=null) AsyncImage(model=e.imageUrl,contentDescription=e.name,contentScale=ContentScale.Fit)
             else Box(contentAlignment=Alignment.Center){Icon(Icons.Default.FitnessCenter,null,Modifier.size(80.dp),tint=Gold)}
         }
@@ -681,7 +738,7 @@ fun Detail(e:Exercise,back:()->Unit) {
     Column(Modifier.fillMaxSize().background(Bg).verticalScroll(rememberScrollState()).padding(18.dp)) {
         IconButton(back){Icon(Icons.Default.ArrowBack,null)}
         Text(e.name,fontSize=30.sp,fontWeight=FontWeight.Black);Text(e.muscle,color=Gold);Spacer(Modifier.height(14.dp))
-        Surface(color=Panel,shape=RoundedCornerShape(22.dp),modifier=Modifier.fillMaxWidth().height(240.dp)) {
+        Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(22.dp),modifier=Modifier.fillMaxWidth().height(240.dp)) {
             Column(horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.Center) {
                 ExerciseVisual(e.name,Modifier.size(190.dp));Text("Animovaná ukázka pohybu",color=Muted,fontSize=12.sp)
             }
@@ -725,7 +782,7 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
             Button({
                 store.addWorkout(profile.minutes,totalSets,totalReps)
                 close()
-            },Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange)) {
+            },Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)) {
                 Text("ULOŽIT TRÉNINK")
             }
         }
@@ -787,7 +844,7 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
             contentAlignment=Alignment.Center
         ) {
             if(rest>0) {
-                Surface(color=Panel2,shape=RoundedCornerShape(18.dp),modifier=Modifier.fillMaxSize()) {
+                Surface(color=Panel2,contentColor=TextPrimary,tonalElevation=1.dp,shape=RoundedCornerShape(18.dp),modifier=Modifier.fillMaxSize()) {
                     Column(
                         Modifier.padding(10.dp),
                         horizontalAlignment=Alignment.CenterHorizontally,
@@ -811,7 +868,7 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
                         set=1
                         rest=e.rest
                     } else done=true
-                },Modifier.fillMaxWidth().height(58.dp),colors=ButtonDefaults.buttonColors(containerColor=Orange)) {
+                },Modifier.fillMaxWidth().height(58.dp),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)) {
                     Icon(Icons.Default.Check,null)
                     Spacer(Modifier.width(6.dp))
                     Text("SÉRIE HOTOVÁ",fontWeight=FontWeight.Black)
@@ -837,7 +894,7 @@ fun Stats(profile:UserProfile,store:FitStore) {
             Text("Co jsi opravdu odmakal.",color=Muted)
         }
         item {
-            Surface(color=Panel,shape=RoundedCornerShape(20.dp)){
+            Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(20.dp)){
                 Column(Modifier.padding(18.dp)){
                     Text((progress*100).toInt().toString()+" %",fontSize=34.sp,fontWeight=FontWeight.Black,color=Orange)
                     LinearProgressIndicator(progress={progress},Modifier.fillMaxWidth().height(8.dp),color=Orange,trackColor=Panel2)
@@ -848,7 +905,7 @@ fun Stats(profile:UserProfile,store:FitStore) {
         item {Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){SmallStat(s[2].toString(),"sérií",Modifier.weight(1f));SmallStat(s[3].toString(),"opakování",Modifier.weight(1f))}}
         item {SmallStat(if(rpe==0f)"—" else String.format("%.1f",rpe),"průměrné RPE",Modifier.fillMaxWidth())}
         item {
-            Surface(color=Panel,shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth()) {
+            Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(18.dp)) {
                     Text("Svalové zatížení plánu",fontSize=19.sp,fontWeight=FontWeight.Bold)
                     Text("Kde má dnešní plán největší důraz.",color=Muted,fontSize=12.sp)
@@ -888,7 +945,7 @@ fun Profile(
             IconButton(openSettings){Icon(Icons.Default.Settings,null)}
         }
         Spacer(Modifier.height(16.dp))
-        Surface(color=Color(0xFF251F2A),shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth().clickable{openPremium()}) {
+        Surface(color=Color(0xFF251F2A),contentColor=TextPrimary,tonalElevation=2.dp,shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth().clickable{openPremium()}) {
             Row(Modifier.padding(18.dp),verticalAlignment=Alignment.CenterVertically) {
                 Icon(Icons.Default.Star,null,tint=Gold,modifier=Modifier.size(34.dp))
                 Spacer(Modifier.width(12.dp))
@@ -911,7 +968,7 @@ fun Profile(
         Spacer(Modifier.height(12.dp))
         Chips("Úroveň",listOf("Začátečník","Mírně pokročilý","Pokročilý"),u.experience){u=u.copy(experience=it)}
         Spacer(Modifier.height(18.dp))
-        Button({save(u)},Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange)){Text("Uložit změny",fontWeight=FontWeight.Bold)}
+        Button({save(u)},Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)){Text("Uložit změny",fontWeight=FontWeight.Bold)}
         Spacer(Modifier.height(18.dp))
         Note("Profil a statistiky zůstávají lokálně v telefonu. Online katalog cviků se načítá jen při otevření knihovny.")
     }
@@ -919,7 +976,7 @@ fun Profile(
 
 @Composable
 fun ProfileAction(icon:androidx.compose.ui.graphics.vector.ImageVector,title:String,subtitle:String,click:()->Unit) {
-    Surface(color=Panel,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth().padding(vertical=5.dp).clickable{click()}) {
+    Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(16.dp),modifier=Modifier.fillMaxWidth().padding(vertical=5.dp).clickable{click()}) {
         Row(Modifier.padding(15.dp),verticalAlignment=Alignment.CenterVertically) {
             Icon(icon,null,tint=Gold)
             Spacer(Modifier.width(13.dp))
@@ -934,7 +991,7 @@ fun SettingsPage(back:()->Unit,premium:()->Unit) {
     var reminders by remember { mutableStateOf(true) }
     Column(Modifier.fillMaxSize().background(Bg).verticalScroll(rememberScrollState()).padding(18.dp)) {
         Row(verticalAlignment=Alignment.CenterVertically){IconButton(back){Icon(Icons.Default.ArrowBack,null,tint=Color.White)};Text("Nastavení",fontSize=28.sp,fontWeight=FontWeight.Black,color=Color.White)}
-        Surface(color=Color(0xFF251F2A),shape=RoundedCornerShape(18.dp),modifier=Modifier.fillMaxWidth().clickable{premium()}) {
+        Surface(color=Color(0xFF251F2A),contentColor=TextPrimary,tonalElevation=2.dp,shape=RoundedCornerShape(18.dp),modifier=Modifier.fillMaxWidth().clickable{premium()}) {
             Row(Modifier.padding(17.dp),verticalAlignment=Alignment.CenterVertically){Icon(Icons.Default.Star,null,tint=Gold);Spacer(Modifier.width(12.dp));Text("ForgeFit Premium",Modifier.weight(1f),fontWeight=FontWeight.Bold,color=Color.White);Icon(Icons.Default.ChevronRight,null,tint=Color.White)}
         }
         Spacer(Modifier.height(18.dp))
@@ -969,7 +1026,7 @@ fun SettingInfo(title:String,sub:String){
 fun PremiumPage(back:()->Unit) {
     Column(Modifier.fillMaxSize().background(Bg).verticalScroll(rememberScrollState()).padding(18.dp)) {
         Row(verticalAlignment=Alignment.CenterVertically){IconButton(back){Icon(Icons.Default.ArrowBack,null)};Text("ForgeFit Premium",fontSize=28.sp,fontWeight=FontWeight.Black)}
-        Surface(color=Color(0xFF251F2A),shape=RoundedCornerShape(24.dp),modifier=Modifier.fillMaxWidth()) {
+        Surface(color=Color(0xFF251F2A),contentColor=TextPrimary,tonalElevation=2.dp,shape=RoundedCornerShape(24.dp),modifier=Modifier.fillMaxWidth()) {
             Column(Modifier.padding(22.dp),horizontalAlignment=Alignment.CenterHorizontally) {
                 Icon(Icons.Default.Star,null,tint=Gold,modifier=Modifier.size(58.dp))
                 Spacer(Modifier.height(12.dp))
@@ -979,7 +1036,7 @@ fun PremiumPage(back:()->Unit) {
                     Row(Modifier.fillMaxWidth().padding(vertical=6.dp)){Text("✓",color=Gold,fontWeight=FontWeight.Black);Spacer(Modifier.width(10.dp));Text(it)}
                 }
                 Spacer(Modifier.height(18.dp))
-                Button({},enabled=false,modifier=Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange)){Text("PŘIPOJIT PLATBY GOOGLE PLAY")}
+                Button({},enabled=false,modifier=Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)){Text("PŘIPOJIT PLATBY GOOGLE PLAY")}
                 Text("Nákup se zpřístupní až po založení produktu v Google Play Console.",color=Muted,fontSize=11.sp,textAlign=TextAlign.Center,modifier=Modifier.padding(top=8.dp))
             }
         }
@@ -1020,7 +1077,7 @@ fun SmartToolsPage(back:()->Unit) {
 
 @Composable
 fun ToolCard(title:String,sub:String,content:@Composable ColumnScope.()->Unit) {
-    Surface(color=Panel,shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth()) {
+    Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(20.dp),modifier=Modifier.fillMaxWidth()) {
         Column(Modifier.padding(18.dp)) { Text(title,fontSize=20.sp,fontWeight=FontWeight.Black);Text(sub,color=Muted,fontSize=12.sp);Spacer(Modifier.height(12.dp));content() }
     }
 }
