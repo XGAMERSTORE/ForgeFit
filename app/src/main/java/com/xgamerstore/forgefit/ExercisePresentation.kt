@@ -89,6 +89,7 @@ fun czCategory(value: String): String = when (cleanRemoteText(value).lowercase()
 
 fun czExerciseName(name: String): String {
     val exact = mapOf(
+        "90/90 Hamstring" to "90/90 protažení zadních stehen",
         "Adductor/Groin" to "Přitahovače stehen / třísla",
         "Advanced Kettlebell Windmill" to "Pokročilý kettlebell windmill",
         "Air Bike" to "Šlapání ve vzduchu",
@@ -110,6 +111,7 @@ fun czExerciseName(name: String): String {
 
     var result = name
     val replacements = listOf(
+        "Hamstring" to "zadních stehen",
         "Dumbbell" to "jednoručkami",
         "Barbell" to "velkou činkou",
         "Kettlebell" to "kettlebellem",
@@ -136,12 +138,31 @@ fun czExerciseName(name: String): String {
     return result.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 }
 
+fun czRemoteInstructions(e: RemoteExercise): String {
+    val originalName = cleanRemoteText(e.name).lowercase()
+    val muscle = czMuscles(e.muscles).ifBlank { "cílovou svalovou skupinu" }
+    val equipment = czEquipment(e.equipment)
+    val category = czCategory(e.category)
+
+    if ("90/90 hamstring" in originalName) {
+        return "Lehni si na záda a jednu nohu nech nataženou na podložce.\n\nDruhou nohu pokrč v kyčli a koleni přibližně do pravého úhlu. Podle potřeby si stehno přidrž rukama.\n\nPomalu natahuj pokrčenou nohu vzhůru, dokud necítíš příjemné protažení zadní strany stehna. Na okamžik vydrž a vrať se zpět.\n\nOpakuj 10–20krát a potom vystřídej nohy."
+    }
+
+    return when (cleanRemoteText(e.category).lowercase()) {
+        "stretching" -> "Zaujmi stabilní výchozí polohu a uvolni zbytečné napětí. Zaměř se na $muscle.\n\nPohyb prováděj pomalu a kontrolovaně jen do rozsahu, ve kterém cítíš příjemný tah, ne bolest.\n\nV krajní poloze krátce vydrž, klidně dýchej a potom se pomalu vrať. Proveď stejně i druhou stranu, pokud je cvik jednostranný."
+        "cardio", "plyometrics" -> "Začni v pevné a stabilní poloze. Pohyb prováděj plynule a drž trup pod kontrolou.\n\nTempo zvyšuj postupně. Dopadej měkce a nepokračuj, pokud se rozpadá technika.\n\nCvik zatěžuje hlavně $muscle."
+        "strength", "powerlifting", "olympic weightlifting", "strongman" -> "Připrav si $equipment a nastav pevnou výchozí pozici. Zpevni střed těla a drž klouby v přirozené ose.\n\nPohyb veď kontrolovaně v celém bezpečném rozsahu. Nevyužívej švih, pokud není součástí dané techniky.\n\nZaměř se hlavně na $muscle a ukonči sérii dřív, než začne výrazně klesat kvalita provedení."
+        else -> "Zaujmi stabilní výchozí polohu. Pohyb prováděj pomalu a pod kontrolou.\n\nSoustřeď se na $muscle a drž plynulé dýchání. Rozsah přizpůsob tak, aby byl cvik pohodlný a bez ostré bolesti.\n\nTyp cviku: ${if (category.isBlank()) "obecné cvičení" else category}."
+    }
+}
+
 fun localizedRemoteExercise(e: RemoteExercise): RemoteExercise = e.copy(
     name = czExerciseName(cleanRemoteText(e.name, "Cvik")),
     level = czLevel(e.level),
     category = czCategory(e.category),
     equipment = czEquipment(e.equipment),
-    muscles = czMuscles(e.muscles)
+    muscles = czMuscles(e.muscles),
+    instructions = czRemoteInstructions(e)
 )
 
 @Composable
