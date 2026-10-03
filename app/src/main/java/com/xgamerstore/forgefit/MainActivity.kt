@@ -172,31 +172,89 @@ val exerciseLibrary = listOf(
 )
 
 
-fun workoutFor(profile: UserProfile): List<Exercise> {
+fun exerciseGroup(e: Exercise): String = when {
+    e.muscle.contains("Kondice", true) || e.muscle.contains("Celé tělo", true) -> "Kondice"
+    e.muscle.contains("Nohy", true) || e.muscle.contains("Hýždě", true) || e.muscle.contains("Lýtka", true) -> "Spodek"
+    e.muscle.contains("Hrudník", true) || e.muscle.contains("Triceps", true) || e.muscle.contains("Ramena", true) || e.muscle.contains("Paže", true) -> "Vršek"
+    e.muscle.contains("Záda", true) -> "Záda"
+    else -> "Střed"
+}
+
+fun workoutFor(
+    profile: UserProfile,
+    sessionIndex: Int = 0,
+    weekSeed: Int = 0,
+    avoidNames: Set<String> = emptySet(),
+    averageRpe: Float = 0f
+): List<Exercise> {
     val count = when {
         profile.minutes <= 20 -> 4
         profile.minutes <= 40 -> 6
         else -> 8
     }
-    val preferred = exerciseLibrary.filter { e ->
-        when {
-            "Nohy" in profile.focus -> e.muscle.contains("Nohy")
-            "Hýždě" in profile.focus -> e.muscle.contains("Hýždě")
-            "Břicho" in profile.focus -> e.muscle.contains("Břicho") || e.muscle.contains("Střed těla")
-            "Hrudník" in profile.focus -> e.muscle.contains("Hrudník")
-            "Záda" in profile.focus -> e.muscle.contains("Záda")
-            "Ramena" in profile.focus -> e.muscle.contains("ramena", ignoreCase = true) || e.muscle.contains("Ramena")
-            "Kondice" in profile.focus -> e.muscle.contains("Kondice")
+
+    val allowed = exerciseLibrary.filter { e ->
+        when(profile.experience) {
+            "Začátečník" -> e.difficulty != "Pokročilý"
+            "Mírně pokročilý" -> true
             else -> true
         }
     }
-    val base = if (preferred.size >= count) preferred else exerciseLibrary
-    val ordered = when(profile.goal) {
-        "Kondice", "Zhubnout" -> base.sortedByDescending { it.seconds > 0 || it.muscle.contains("Kondice") }
-        "Síla", "Nabrat svaly" -> base.sortedByDescending { it.seconds == 0 }
-        else -> base
+
+    fun focusMatch(e: Exercise): Boolean = profile.focus.any { focus ->
+        when(focus) {
+            "Celé tělo" -> true
+            "Břicho" -> e.muscle.contains("Břicho", true) || e.muscle.contains("Střed těla", true)
+            else -> e.muscle.contains(focus, true)
+        }
     }
-    return ordered.take(count)
+
+    val seed = weekSeed * 97 + sessionIndex * 31 + profile.goal.hashCode()
+    fun variation(e: Exercise): Int = ((e.name.hashCode() xor seed) and 0x7fffffff) % 23
+
+    fun score(e: Exercise): Int {
+        var score = variation(e)
+        if(focusMatch(e)) score += 45
+        if(e.name in avoidNames) score -= 55
+
+        when(profile.goal) {
+            "Kondice", "Zhubnout" -> {
+                if(e.muscle.contains("Kondice", true) || e.seconds > 0) score += 28
+                if(exerciseGroup(e) == "Střed") score += 8
+            }
+            "Síla", "Nabrat svaly" -> {
+                if(e.seconds == 0) score += 25
+                if(exerciseGroup(e) == "Spodek" || exerciseGroup(e) == "Vršek" || exerciseGroup(e) == "Záda") score += 10
+            }
+            else -> if(exerciseGroup(e) == "Kondice") score += 8
+        }
+
+        // Jednoduchá autoregulace podle RPE: při dlouhodobě těžkých sériích
+        // netlačíme pokročilé cviky nahoru, při lehkých je naopak lehce zvýhodníme.
+        if(averageRpe >= 9f && e.difficulty == "Pokročilý") score -= 35
+        if(averageRpe in 1f..7f && e.difficulty == "Pokročilý" && profile.experience == "Pokročilý") score += 10
+        return score
+    }
+
+    val ranked = allowed.sortedWith(compareByDescending<Exercise> { score(it) }.thenBy { it.name })
+    val result = mutableListOf<Exercise>()
+    val groupCounts = mutableMapOf<String,Int>()
+
+    // Nejdřív skládáme vyvážený trénink: nejvýše dva cviky ze stejné hlavní skupiny.
+    for(e in ranked) {
+        if(result.size >= count) break
+        val g = exerciseGroup(e)
+        if((groupCounts[g] ?: 0) < 2) {
+            result += e
+            groupCounts[g] = (groupCounts[g] ?: 0) + 1
+        }
+    }
+    // U úzkého zaměření doplníme nejlepší zbývající cviky.
+    for(e in ranked) {
+        if(result.size >= count) break
+        if(e !in result) result += e
+    }
+    return result
 }
 
 class FitStore(context: Context) {
@@ -229,7 +287,7 @@ class FitStore(context: Context) {
             .apply()
     }
 
-    fun addWorkout(minutes:Int, sets:Int, reps:Int) {
+    fun addWorkout(minutes:Int, sets:Int, reps:Int, plan:List<Exercise>) {
         ensureWeek()
         p.edit()
             .putInt("workouts",p.getInt("workouts",0)+1)
@@ -237,6 +295,7 @@ class FitStore(context: Context) {
             .putInt("sets_sum",p.getInt("sets_sum",0)+sets)
             .putInt("reps_sum",p.getInt("reps_sum",0)+reps)
             .putInt("total",p.getInt("total",0)+1)
+            .putStringSet("last_exercises",plan.map { it.name }.toSet())
             .apply()
     }
 
@@ -250,6 +309,8 @@ class FitStore(context: Context) {
         val count = p.getInt("rpe_count",0)
         return if(count==0) 0f else p.getInt("rpe_sum",0).toFloat()/count
     }
+
+    fun lastExerciseNames(): Set<String> = p.getStringSet("last_exercises", emptySet()) ?: emptySet()
 
     fun stats(): List<Int> {
         ensureWeek()
@@ -510,7 +571,11 @@ fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
 
 @Composable
 fun Home(profile:UserProfile,store:FitStore,start:()->Unit) {
-    val stats=store.stats(); val plan=workoutFor(profile)
+    val stats=store.stats()
+    val sessionIndex=stats[0] % profile.days.coerceAtLeast(1)
+    val weekSeed=(LocalDate.now().toEpochDay()/7L).toInt()
+    val plan=workoutFor(profile,sessionIndex,weekSeed,store.lastExerciseNames(),store.averageRpe())
+    val planLetter=('A'.code + sessionIndex.coerceIn(0,6)).toChar()
     LazyColumn(Modifier.fillMaxSize().background(Bg),contentPadding=PaddingValues(18.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
             Spacer(Modifier.height(8.dp))
@@ -520,7 +585,7 @@ fun Home(profile:UserProfile,store:FitStore,start:()->Unit) {
         item {
             Surface(color=Panel,contentColor=TextPrimary,tonalElevation=2.dp,shadowElevation=1.dp,shape=RoundedCornerShape(24.dp)) {
                 Column(Modifier.padding(18.dp)) {
-                    Text("DNEŠNÍ FORGE",color=Orange,fontWeight=FontWeight.Black)
+                    Text("DNEŠNÍ FORGE • TRÉNINK "+planLetter,color=Orange,fontWeight=FontWeight.Black)
                     Text(profile.minutes.toString()+" minut • "+plan.size+" cviků",fontSize=23.sp,fontWeight=FontWeight.Bold)
                     Text(plan.sumOf{it.sets}.toString()+" pracovních sérií",color=Muted)
                     Spacer(Modifier.height(15.dp))
@@ -752,7 +817,9 @@ fun Detail(e:Exercise,back:()->Unit) {
 
 @Composable
 fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
-    val plan=remember(profile){workoutFor(profile)}
+    val sessionIndex=store.stats()[0] % profile.days.coerceAtLeast(1)
+    val weekSeed=(LocalDate.now().toEpochDay()/7L).toInt()
+    val plan=remember(profile,sessionIndex,weekSeed){workoutFor(profile,sessionIndex,weekSeed,store.lastExerciseNames(),store.averageRpe())}
     val sequence=remember(plan){
         buildList {
             val rounds=plan.maxOfOrNull { it.sets } ?: 1
@@ -793,7 +860,7 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
             Text(totalSets.toString()+" sérií • "+totalReps+" opakování",color=Muted)
             Spacer(Modifier.height(22.dp))
             Button({
-                store.addWorkout(profile.minutes,totalSets,totalReps)
+                store.addWorkout(profile.minutes,totalSets,totalReps,plan)
                 close()
             },Modifier.fillMaxWidth(),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)) {
                 Text("ULOŽIT TRÉNINK")
@@ -891,7 +958,9 @@ fun Stats(profile:UserProfile,store:FitStore) {
     val s=store.stats()
     val progress=(s[0].toFloat()/profile.days).coerceIn(0f,1f)
     val rpe=store.averageRpe()
-    val plan=workoutFor(profile)
+    val sessionIndex=s[0] % profile.days.coerceAtLeast(1)
+    val weekSeed=(LocalDate.now().toEpochDay()/7L).toInt()
+    val plan=workoutFor(profile,sessionIndex,weekSeed,store.lastExerciseNames(),store.averageRpe())
     val groups=listOf("Nohy","Hýždě","Břicho","Hrudník","Záda","Ramena","Kondice")
     val heat=groups.associateWith { g -> plan.count{it.muscle.contains(g,true)} }
 
