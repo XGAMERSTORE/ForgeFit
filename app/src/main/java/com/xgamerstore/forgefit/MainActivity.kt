@@ -533,7 +533,7 @@ fun Home(profile:UserProfile,store:FitStore,start:()->Unit) {
         item {
             Text("Tento týden",fontSize=20.sp,fontWeight=FontWeight.Bold)
             Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-                SmallStat(stats[0].toString()+"/"+profile.days,"tréninky",Modifier.weight(1f))
+                SmallStat(minOf(stats[0],profile.days).toString()+"/"+profile.days,"tréninky",Modifier.weight(1f))
                 SmallStat(stats[1].toString(),"minut",Modifier.weight(1f))
                 SmallStat(stats[2].toString(),"sérií",Modifier.weight(1f))
             }
@@ -753,14 +753,27 @@ fun Detail(e:Exercise,back:()->Unit) {
 @Composable
 fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
     val plan=remember(profile){workoutFor(profile)}
-    var i by remember{mutableIntStateOf(0)}
-    var set by remember{mutableIntStateOf(1)}
+    val sequence=remember(plan){
+        buildList {
+            val rounds=plan.maxOfOrNull { it.sets } ?: 1
+            for(round in 1..rounds) {
+                plan.forEachIndexed { index,exercise ->
+                    if(round<=exercise.sets) add(index to round)
+                }
+            }
+        }
+    }
+    var stepIndex by remember{mutableIntStateOf(0)}
     var rest by remember{mutableIntStateOf(0)}
     var totalSets by remember{mutableIntStateOf(0)}
     var totalReps by remember{mutableIntStateOf(0)}
     var done by remember{mutableStateOf(false)}
     var rpe by remember{mutableIntStateOf(8)}
-    val e=plan[i.coerceAtMost(plan.lastIndex)]
+    val current=sequence[stepIndex.coerceAtMost(sequence.lastIndex)]
+    val i=current.first
+    val round=current.second
+    val e=plan[i]
+    val maxRounds=plan.maxOfOrNull { it.sets } ?: 1
 
     LaunchedEffect(rest) {
         if(rest>0) {
@@ -792,12 +805,12 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
     Column(Modifier.fillMaxSize().background(Bg).padding(18.dp)) {
         Row(verticalAlignment=Alignment.CenterVertically) {
             IconButton(close){Icon(Icons.Default.Close,null,tint=Color.White)}
-            Text((i+1).toString()+"/"+plan.size,color=Muted)
+            Text("Cvik "+(i+1)+"/"+plan.size,color=Muted)
             Spacer(Modifier.weight(1f))
-            Text("Série "+set+"/"+e.sets,color=Color.White)
+            Text("Kolo "+round+"/"+maxRounds,color=Color.White)
         }
         LinearProgressIndicator(
-            progress={ (i+(set.toFloat()/e.sets))/plan.size },
+            progress={ (stepIndex+1).toFloat()/sequence.size },
             modifier=Modifier.fillMaxWidth(),
             color=Orange,
             trackColor=Panel2
@@ -838,7 +851,6 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
         }
         Spacer(Modifier.height(6.dp))
 
-        // Stejná výška při cvičení i pauze: horní část obrazovky už neposkakuje.
         Box(
             Modifier.fillMaxWidth().height(126.dp),
             contentAlignment=Alignment.Center
@@ -860,12 +872,8 @@ fun WorkoutScreen(profile:UserProfile,store:FitStore,close:()->Unit) {
                     store.saveRpe(rpe)
                     totalSets++
                     if(e.seconds==0) totalReps+=e.reps
-                    if(set<e.sets) {
-                        set++
-                        rest=e.rest
-                    } else if(i<plan.lastIndex) {
-                        i++
-                        set=1
+                    if(stepIndex<sequence.lastIndex) {
+                        stepIndex++
                         rest=e.rest
                     } else done=true
                 },Modifier.fillMaxWidth().height(58.dp),colors=ButtonDefaults.buttonColors(containerColor=Orange,contentColor=Color(0xFF111111),disabledContainerColor=Panel2,disabledContentColor=Muted)) {
@@ -901,7 +909,7 @@ fun Stats(profile:UserProfile,store:FitStore) {
                 }
             }
         }
-        item {Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){SmallStat(s[0].toString()+"/"+profile.days,"tréninky",Modifier.weight(1f));SmallStat(s[1].toString(),"minut",Modifier.weight(1f))}}
+        item {Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){SmallStat(minOf(s[0],profile.days).toString()+"/"+profile.days,"tréninky",Modifier.weight(1f));SmallStat(s[1].toString(),"minut",Modifier.weight(1f))}}
         item {Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){SmallStat(s[2].toString(),"sérií",Modifier.weight(1f));SmallStat(s[3].toString(),"opakování",Modifier.weight(1f))}}
         item {SmallStat(if(rpe==0f)"—" else String.format("%.1f",rpe),"průměrné RPE",Modifier.fillMaxWidth())}
         item {
