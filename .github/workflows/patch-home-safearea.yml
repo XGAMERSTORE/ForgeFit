@@ -1,0 +1,37 @@
+name: Patch ForgeFit home safe area
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-home-safearea.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Remove app header gap issue and keep status-bar safe area
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/src/main/java/com/xgamerstore/forgefit/MainActivity.kt')
+          s = p.read_text()
+          old = '    Scaffold(containerColor=Bg,bottomBar={'
+          new = '    Scaffold(modifier=Modifier.statusBarsPadding(),containerColor=Bg,bottomBar={'
+          if old not in s:
+              raise SystemExit('MainArea Scaffold block not found')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app/src/main/java/com/xgamerstore/forgefit/MainActivity.kt
+          git commit -m 'Keep content below system status bar without app header'
+          git push origin main
