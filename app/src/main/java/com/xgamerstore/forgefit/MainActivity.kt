@@ -485,7 +485,7 @@ fun MainArea(profile:UserProfile,store:FitStore,save:(UserProfile)->Unit) {
         "tools" -> { SmartToolsPage{extra=null}; return }
         "profileEdit" -> { Onboarding(profile){ save(it); extra=null }; return }
     }
-    Scaffold(containerColor=Bg,bottomBar={
+    Scaffold(modifier=Modifier.statusBarsPadding(),containerColor=Bg,bottomBar={
         NavigationBar(containerColor=Panel) {
             listOf("Dnes","Cviky","Přehled","Profil").forEachIndexed { i,t ->
                 val icon=when(i){0->Icons.Default.Home;1->Icons.Default.FitnessCenter;2->Icons.Default.BarChart;else->Icons.Default.Person}
